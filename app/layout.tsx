@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { RouteHandler } from "@/components/RouteHandler";
 
 export const metadata: Metadata = {
   title: "iShipped.io - Project Cards for GitHub Repos",
@@ -24,7 +25,9 @@ export default function RootLayout({
       <body className="min-h-screen bg-white dark:bg-bg-dark text-gray-900 dark:text-text-dark antialiased">
         <ThemeProvider>
           <Header />
-          <main>{children}</main>
+          <main>
+            <RouteHandler>{children}</RouteHandler>
+          </main>
         </ThemeProvider>
       </body>
     </html>

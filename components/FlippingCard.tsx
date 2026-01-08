@@ -39,21 +39,41 @@ export function FlippingCard() {
   useEffect(() => {
     if (hasAutoFlipped || !cardRef.current) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-          setIsFlipped(true);
-          setHasAutoFlipped(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 }
-    );
+    const element = cardRef.current;
 
-    observer.observe(cardRef.current);
+    // Check if element is initially visible
+    const rect = element.getBoundingClientRect();
+    const isInitiallyVisible = rect.top < window.innerHeight && rect.bottom > 0;
 
-    return () => observer.disconnect();
+    const startObserving = () => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+            setIsFlipped(true);
+            setHasAutoFlipped(true);
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.5 }
+      );
+
+      observer.observe(element);
+      return observer;
+    };
+
+    // If initially visible, wait 2 seconds before enabling auto-flip
+    // Otherwise, start observing immediately
+    if (isInitiallyVisible) {
+      const timeout = setTimeout(() => {
+        const observer = startObserving();
+        return () => observer.disconnect();
+      }, 2000);
+      return () => clearTimeout(timeout);
+    } else {
+      const observer = startObserving();
+      return () => observer.disconnect();
+    }
   }, [hasAutoFlipped]);
 
   return (
