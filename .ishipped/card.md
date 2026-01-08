@@ -1,7 +1,7 @@
 ---
 title: "iShipped.io"
 summary: "Ship it. Show it. Share it. Project cards for GitHub repos."
-shipped: 2024-03-15
+shipped: 2026-01-07
 version: "1.0.0"
 tags:
   - nextjs
@@ -35,7 +35,7 @@ iShipped.io is a simple service that renders beautiful project cards from GitHub
 
 1. Create `/.ishipped/card.md` in your repository
 2. Add YAML frontmatter with at least a `title`
-3. Visit `ishipped.io/card?url=https://github.com/you/repo`
+3. Visit `ishipped.io/card/you/repo`
 
 ## Example Card
 
@@ -54,4 +54,4 @@ Your markdown content here.
 
 ---
 
-Built with Next.js and deployed on Vercel.
+Built with Next.js.
