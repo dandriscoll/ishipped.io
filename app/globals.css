@@ -1,0 +1,85 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-accent: #0969da;
+  --color-accent-hover: #0860c7;
+  --color-border: #d0d7de;
+  --color-border-dark: #30363d;
+  --color-muted: #656d76;
+  --color-muted-dark: #8b949e;
+  --color-bg-dark: #0d1117;
+  --color-surface-dark: #161b22;
+  --color-text-dark: #c9d1d9;
+
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* Custom prose styles for card body */
+.card-body {
+  @apply prose prose-slate dark:prose-invert max-w-none;
+}
+
+.card-body h2 {
+  @apply text-xl font-semibold mt-8 mb-4 first:mt-0;
+}
+
+.card-body h3 {
+  @apply text-lg font-semibold mt-6 mb-3;
+}
+
+.card-body p {
+  @apply mb-4 leading-relaxed;
+}
+
+.card-body ul,
+.card-body ol {
+  @apply mb-4 pl-6;
+}
+
+.card-body li {
+  @apply mb-2;
+}
+
+.card-body pre {
+  @apply bg-gray-100 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto text-sm mb-4;
+}
+
+.card-body code:not(pre code) {
+  @apply bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.card-body blockquote {
+  @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic my-4;
+}
+
+.card-body img {
+  @apply rounded-lg max-w-full my-4;
+}
+
+.card-body table {
+  @apply w-full border-collapse mb-4;
+}
+
+.card-body th,
+.card-body td {
+  @apply border border-gray-300 dark:border-gray-600 px-3 py-2 text-left;
+}
+
+.card-body th {
+  @apply bg-gray-100 dark:bg-gray-800 font-semibold;
+}
+
+.card-body a {
+  @apply text-accent hover:underline;
+}
+
+.card-body hr {
+  @apply my-8 border-gray-200 dark:border-gray-700;
+}
+
+/* Focus styles */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-accent;
+}

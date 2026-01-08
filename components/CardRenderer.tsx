@@ -1,0 +1,149 @@
+import Image from "next/image";
+import type { ParsedCard } from "@/lib/card";
+import type { RepoMetadata } from "@/lib/github";
+import { formatShippedDate, formatStars } from "@/lib/card";
+import { AuthorBlock } from "./AuthorBlock";
+import { TagList } from "./TagList";
+import { LinkButtons } from "./LinkButtons";
+
+interface CardRendererProps {
+  card: ParsedCard;
+  bodyHtml: string;
+  owner: string;
+  repo: string;
+  metadata: RepoMetadata;
+}
+
+export function CardRenderer({
+  card,
+  bodyHtml,
+  owner,
+  repo,
+  metadata,
+}: CardRendererProps) {
+  const { frontmatter } = card;
+  const author =
+    typeof frontmatter.author === "object"
+      ? frontmatter.author
+      : { name: frontmatter.author || owner, github: owner };
+
+  return (
+    <article className="max-w-3xl mx-auto px-4 py-8">
+      {/* Hero Image */}
+      {frontmatter.hero && (
+        <div className="mb-8 rounded-lg overflow-hidden">
+          <Image
+            src={frontmatter.hero}
+            alt={frontmatter.title}
+            width={800}
+            height={400}
+            className="w-full h-auto object-cover"
+            priority
+          />
+        </div>
+      )}
+
+      {/* Title and Version */}
+      <header className="mb-6">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-3xl font-bold">{frontmatter.title}</h1>
+          {frontmatter.version && (
+            <span className="px-2 py-0.5 text-sm bg-gray-100 dark:bg-gray-800 text-muted dark:text-muted-dark rounded-md font-mono">
+              {frontmatter.version}
+            </span>
+          )}
+        </div>
+        {frontmatter.summary && (
+          <p className="mt-2 text-lg text-muted dark:text-muted-dark">
+            {frontmatter.summary}
+          </p>
+        )}
+      </header>
+
+      {/* Tags */}
+      {frontmatter.tags && frontmatter.tags.length > 0 && (
+        <div className="mb-6">
+          <TagList tags={frontmatter.tags} />
+        </div>
+      )}
+
+      {/* Links */}
+      {frontmatter.links && frontmatter.links.length > 0 && (
+        <div className="mb-8">
+          <LinkButtons links={frontmatter.links} />
+        </div>
+      )}
+
+      {/* Divider */}
+      {bodyHtml && (
+        <hr className="my-8 border-gray-200 dark:border-gray-700" />
+      )}
+
+      {/* Body Content */}
+      {bodyHtml && (
+        <div
+          className="card-body"
+          dangerouslySetInnerHTML={{ __html: bodyHtml }}
+        />
+      )}
+
+      {/* Author and Metadata */}
+      <footer className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <AuthorBlock author={author} />
+          {frontmatter.shipped && (
+            <div className="text-sm text-muted dark:text-muted-dark">
+              Shipped on {formatShippedDate(frontmatter.shipped)}
+            </div>
+          )}
+        </div>
+
+        {/* Repo Info */}
+        <div className="mt-6 p-4 bg-gray-50 dark:bg-surface-dark rounded-lg">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <a
+                href={`https://github.com/${owner}/${repo}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium hover:text-accent transition-colors"
+              >
+                {owner}/{repo}
+              </a>
+              {metadata.stars > 0 && (
+                <>
+                  <span className="text-muted dark:text-muted-dark">·</span>
+                  <span className="text-muted dark:text-muted-dark flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    {formatStars(metadata.stars)}
+                  </span>
+                </>
+              )}
+              {metadata.license && (
+                <>
+                  <span className="text-muted dark:text-muted-dark">·</span>
+                  <span className="text-muted dark:text-muted-dark">
+                    {metadata.license}
+                  </span>
+                </>
+              )}
+            </div>
+            <a
+              href={`https://github.com/${owner}/${repo}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-accent hover:underline inline-flex items-center gap-1"
+            >
+              View Repository
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </footer>
+    </article>
+  );
+}
