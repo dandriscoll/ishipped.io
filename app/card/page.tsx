@@ -1,11 +1,8 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import {
-  parseGitHubURL,
   getDefaultBranch,
-  constructFetchURL,
   fetchCardContent,
   getRepoMetadata,
   GitHubURLError,
@@ -44,9 +41,9 @@ function LoadingCard() {
 
 function ErrorDisplay({ code }: { code: string }) {
   const errors: Record<string, { title: string; message: string }> = {
-    INVALID_URL: {
-      title: "Invalid GitHub URL",
-      message: "Please enter a valid GitHub repository or file URL.",
+    INVALID_PATH: {
+      title: "Invalid Path",
+      message: "Please use the format /card/owner/repo or /card/owner/repo/path/to/file.md",
     },
     CARD_NOT_FOUND: {
       title: "Card not found",
@@ -111,14 +108,33 @@ function ErrorDisplay({ code }: { code: string }) {
   );
 }
 
-function CardContent() {
-  const searchParams = useSearchParams();
-  const url = searchParams.get("url");
+export default function CardPage() {
   const [state, setState] = useState<CardState>({ status: "loading" });
 
   useEffect(() => {
-    if (!url) {
-      setState({ status: "error", code: "INVALID_URL" });
+    // Parse path from window.location (e.g., /card/owner/repo or /card/owner/repo/path/to/file.md)
+    const pathname = window.location.pathname;
+    const match = pathname.match(/^\/card\/(.+)$/);
+
+    if (!match) {
+      setState({ status: "error", code: "INVALID_PATH" });
+      return;
+    }
+
+    const pathSegments = match[1].split("/").filter(Boolean);
+
+    if (pathSegments.length < 2) {
+      setState({ status: "error", code: "INVALID_PATH" });
+      return;
+    }
+
+    const owner = pathSegments[0];
+    const repo = pathSegments[1];
+    const filePath = pathSegments.length > 2 ? pathSegments.slice(2).join("/") : null;
+
+    // Validate file path if provided (must be .md)
+    if (filePath && !filePath.endsWith(".md")) {
+      setState({ status: "error", code: "INVALID_PATH" });
       return;
     }
 
@@ -126,32 +142,31 @@ function CardContent() {
       setState({ status: "loading" });
 
       try {
-        // Parse the GitHub URL
-        const parsed = parseGitHubURL(url!);
+        // Get the default branch
+        const ref = await getDefaultBranch(owner, repo);
 
-        // Get the ref (branch/tag) if not specified
-        const ref =
-          parsed.ref || (await getDefaultBranch(parsed.owner, parsed.repo));
+        // Construct fetch URL
+        const fetchUrl = filePath
+          ? `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${filePath}`
+          : `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/.ishipped/card.md`;
 
-        // Construct and fetch the card content
-        const fetchUrl = constructFetchURL(parsed, ref);
         const content = await fetchCardContent(fetchUrl);
 
         // Parse the card
-        const card = parseCard(content, parsed.owner);
+        const card = parseCard(content, owner);
 
         // Render markdown body
         const bodyHtml = card.body ? await renderMarkdown(card.body) : "";
 
         // Get repo metadata
-        const metadata = await getRepoMetadata(parsed.owner, parsed.repo);
+        const metadata = await getRepoMetadata(owner, repo);
 
         setState({
           status: "success",
           card,
           bodyHtml,
-          owner: parsed.owner,
-          repo: parsed.repo,
+          owner,
+          repo,
           metadata,
         });
 
@@ -170,7 +185,7 @@ function CardContent() {
     }
 
     loadCard();
-  }, [url]);
+  }, []);
 
   if (state.status === "loading") {
     return <LoadingCard />;
@@ -188,13 +203,5 @@ function CardContent() {
       repo={state.repo}
       metadata={state.metadata}
     />
-  );
-}
-
-export default function CardPage() {
-  return (
-    <Suspense fallback={<LoadingCard />}>
-      <CardContent />
-    </Suspense>
   );
 }
