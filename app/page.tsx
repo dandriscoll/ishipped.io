@@ -1,4 +1,5 @@
 import { URLInput } from "@/components/URLInput";
+import { FlippingCard } from "@/components/FlippingCard";
 
 export default function HomePage() {
   return (
@@ -55,41 +56,10 @@ export default function HomePage() {
 
       {/* Card Format */}
       <section className="py-16 px-4">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl font-bold mb-8 text-center">Card Format</h2>
-          <div className="bg-gray-50 dark:bg-surface-dark rounded-lg p-6 overflow-x-auto">
-            <pre className="text-sm font-mono">
-              <code>{`---
-title: "My Awesome Project"
-summary: "A brief description of what it does"
-shipped: 2024-03-15
-tags:
-  - typescript
-  - nextjs
-  - open-source
-author:
-  name: "Your Name"
-  github: "yourusername"
-links:
-  - label: "Live Demo"
-    url: "https://example.com"
-    primary: true
-  - label: "Documentation"
-    url: "https://docs.example.com"
----
-
-## About
-
-Describe your project in detail using Markdown.
-
-## Features
-
-- Feature one
-- Feature two
-- Feature three`}</code>
-            </pre>
-          </div>
-          <div className="mt-6 text-center">
+          <FlippingCard />
+          <div className="mt-8 text-center">
             <a
               href="https://github.com/dandriscoll/ishipped.io/blob/main/SPEC.md"
               target="_blank"

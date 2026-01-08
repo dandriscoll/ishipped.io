@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   getDefaultBranch,
   fetchCardContent,
@@ -11,6 +11,7 @@ import {
 import { parseCard, CardParseError, type ParsedCard } from "@/lib/card";
 import { renderMarkdown } from "@/lib/markdown";
 import { CardRenderer } from "@/components/CardRenderer";
+import { ThemePicker, type CardTheme } from "@/components/ThemePicker";
 
 type CardState =
   | { status: "loading" }
@@ -110,6 +111,11 @@ function ErrorDisplay({ code }: { code: string }) {
 
 export default function CardPage() {
   const [state, setState] = useState<CardState>({ status: "loading" });
+  const [theme, setTheme] = useState<CardTheme>("default");
+
+  const handleThemeChange = useCallback((newTheme: CardTheme) => {
+    setTheme(newTheme);
+  }, []);
 
   useEffect(() => {
     // Parse path from window.location (e.g., /card/owner/repo or /card/owner/repo/path/to/file.md)
@@ -196,12 +202,20 @@ export default function CardPage() {
   }
 
   return (
-    <CardRenderer
-      card={state.card}
-      bodyHtml={state.bodyHtml}
-      owner={state.owner}
-      repo={state.repo}
-      metadata={state.metadata}
-    />
+    <div className="relative">
+      {/* Theme Picker - fixed position */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <ThemePicker onThemeChange={handleThemeChange} />
+      </div>
+
+      <CardRenderer
+        card={state.card}
+        bodyHtml={state.bodyHtml}
+        owner={state.owner}
+        repo={state.repo}
+        metadata={state.metadata}
+        theme={theme}
+      />
+    </div>
   );
 }

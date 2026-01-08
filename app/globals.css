@@ -83,3 +83,146 @@
 :focus-visible {
   @apply outline-2 outline-offset-2 outline-accent;
 }
+
+/* Floating card container for desktop */
+.floating-card {
+  @apply bg-white dark:bg-surface-dark rounded-xl shadow-lg border border-gray-200 dark:border-border-dark;
+}
+
+@media (min-width: 768px) {
+  .floating-card {
+    @apply shadow-xl;
+  }
+}
+
+/* 3D Card Flip Animation */
+.flip-card {
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/* Theme presets */
+:root {
+  --theme-primary: #0969da;
+  --theme-primary-hover: #0860c7;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #e5e7eb;
+}
+
+.dark {
+  --theme-card-bg: #161b22;
+  --theme-card-border: #30363d;
+}
+
+/* Ocean theme */
+[data-card-theme="ocean"] {
+  --theme-primary: #0891b2;
+  --theme-primary-hover: #0e7490;
+  --theme-card-bg: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  --theme-card-border: #7dd3fc;
+}
+
+.dark [data-card-theme="ocean"],
+[data-card-theme="ocean"].dark-theme {
+  --theme-card-bg: linear-gradient(135deg, #0c4a6e 0%, #164e63 100%);
+  --theme-card-border: #0e7490;
+}
+
+/* Forest theme */
+[data-card-theme="forest"] {
+  --theme-primary: #16a34a;
+  --theme-primary-hover: #15803d;
+  --theme-card-bg: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  --theme-card-border: #86efac;
+}
+
+.dark [data-card-theme="forest"],
+[data-card-theme="forest"].dark-theme {
+  --theme-card-bg: linear-gradient(135deg, #14532d 0%, #166534 100%);
+  --theme-card-border: #15803d;
+}
+
+/* Sunset theme */
+[data-card-theme="sunset"] {
+  --theme-primary: #ea580c;
+  --theme-primary-hover: #c2410c;
+  --theme-card-bg: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  --theme-card-border: #fdba74;
+}
+
+.dark [data-card-theme="sunset"],
+[data-card-theme="sunset"].dark-theme {
+  --theme-card-bg: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
+  --theme-card-border: #c2410c;
+}
+
+/* Lavender theme */
+[data-card-theme="lavender"] {
+  --theme-primary: #9333ea;
+  --theme-primary-hover: #7e22ce;
+  --theme-card-bg: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  --theme-card-border: #d8b4fe;
+}
+
+.dark [data-card-theme="lavender"],
+[data-card-theme="lavender"].dark-theme {
+  --theme-card-bg: linear-gradient(135deg, #581c87 0%, #6b21a8 100%);
+  --theme-card-border: #7e22ce;
+}
+
+/* Midnight theme */
+[data-card-theme="midnight"] {
+  --theme-primary: #6366f1;
+  --theme-primary-hover: #4f46e5;
+  --theme-card-bg: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  --theme-card-border: #a5b4fc;
+}
+
+.dark [data-card-theme="midnight"],
+[data-card-theme="midnight"].dark-theme {
+  --theme-card-bg: linear-gradient(135deg, #312e81 0%, #3730a3 100%);
+  --theme-card-border: #4f46e5;
+}
+
+/* Apply theme to floating card */
+.themed-card {
+  background: var(--theme-card-bg);
+  border-color: var(--theme-card-border);
+}
+
+.themed-card .text-accent,
+.themed-card a:not(.btn) {
+  color: var(--theme-primary);
+}
+
+.themed-card .bg-accent {
+  background-color: var(--theme-primary);
+}
+
+.themed-card .bg-accent:hover {
+  background-color: var(--theme-primary-hover);
+}

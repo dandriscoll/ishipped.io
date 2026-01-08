@@ -5,6 +5,7 @@ import { formatShippedDate, formatStars } from "@/lib/card";
 import { AuthorBlock } from "./AuthorBlock";
 import { TagList } from "./TagList";
 import { LinkButtons } from "./LinkButtons";
+import type { CardTheme } from "./ThemePicker";
 
 interface CardRendererProps {
   card: ParsedCard;
@@ -12,6 +13,7 @@ interface CardRendererProps {
   owner: string;
   repo: string;
   metadata: RepoMetadata;
+  theme?: CardTheme;
 }
 
 export function CardRenderer({
@@ -20,6 +22,7 @@ export function CardRenderer({
   owner,
   repo,
   metadata,
+  theme = "default",
 }: CardRendererProps) {
   const { frontmatter } = card;
   const author =
@@ -28,7 +31,11 @@ export function CardRenderer({
       : { name: frontmatter.author || owner, github: owner };
 
   return (
-    <article className="max-w-3xl mx-auto px-4 py-8">
+    <div className="min-h-[calc(100vh-3.5rem)] py-8 px-4 md:py-12 md:px-6 bg-gray-100 dark:bg-bg-dark">
+      <article
+        className="max-w-3xl mx-auto floating-card themed-card p-6 md:p-8"
+        data-card-theme={theme !== "default" ? theme : undefined}
+      >
       {/* Hero Image */}
       {frontmatter.hero && (
         <div className="mb-8 rounded-lg overflow-hidden">
@@ -144,6 +151,7 @@ export function CardRenderer({
           </div>
         </div>
       </footer>
-    </article>
+      </article>
+    </div>
   );
 }
