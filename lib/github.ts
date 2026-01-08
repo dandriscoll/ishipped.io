@@ -80,9 +80,7 @@ export async function getDefaultBranch(
     {
       headers: {
         Accept: "application/vnd.github.v3+json",
-        "User-Agent": "iShipped.io",
       },
-      next: { revalidate: 3600 },
     }
   );
 
@@ -121,13 +119,7 @@ export function constructFetchURL(parsed: ParsedGitHubURL, ref: string): string 
 }
 
 export async function fetchCardContent(url: string): Promise<string> {
-  const response = await fetch(url, {
-    headers: {
-      Accept: "text/plain",
-      "User-Agent": "iShipped.io",
-    },
-    next: { revalidate: 300 }, // 5 minutes
-  });
+  const response = await fetch(url);
 
   if (response.status === 404) {
     throw new GitHubURLError("CARD_NOT_FOUND");
@@ -164,9 +156,7 @@ export async function getRepoMetadata(
       {
         headers: {
           Accept: "application/vnd.github.v3+json",
-          "User-Agent": "iShipped.io",
         },
-        next: { revalidate: 3600 },
       }
     );
 

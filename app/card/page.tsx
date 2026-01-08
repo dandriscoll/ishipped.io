@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
 import {
   parseGitHubURL,
   getDefaultBranch,
@@ -7,14 +9,23 @@ import {
   fetchCardContent,
   getRepoMetadata,
   GitHubURLError,
+  type RepoMetadata,
 } from "@/lib/github";
-import { parseCard, CardParseError } from "@/lib/card";
+import { parseCard, CardParseError, type ParsedCard } from "@/lib/card";
 import { renderMarkdown } from "@/lib/markdown";
 import { CardRenderer } from "@/components/CardRenderer";
 
-interface PageProps {
-  searchParams: Promise<{ url?: string }>;
-}
+type CardState =
+  | { status: "loading" }
+  | { status: "error"; code: string }
+  | {
+      status: "success";
+      card: ParsedCard;
+      bodyHtml: string;
+      owner: string;
+      repo: string;
+      metadata: RepoMetadata;
+    };
 
 function LoadingCard() {
   return (
@@ -31,102 +42,159 @@ function LoadingCard() {
   );
 }
 
-async function CardContent({ url }: { url: string }) {
-  try {
-    // Parse the GitHub URL
-    const parsed = parseGitHubURL(url);
+function ErrorDisplay({ code }: { code: string }) {
+  const errors: Record<string, { title: string; message: string }> = {
+    INVALID_URL: {
+      title: "Invalid GitHub URL",
+      message: "Please enter a valid GitHub repository or file URL.",
+    },
+    CARD_NOT_FOUND: {
+      title: "Card not found",
+      message: "We couldn't find /.ishipped/card.md in this repository.",
+    },
+    PRIVATE_REPO: {
+      title: "Repository not accessible",
+      message:
+        "This repository is private or doesn't exist. iShipped.io only works with public repositories.",
+    },
+    RATE_LIMITED: {
+      title: "Rate limited",
+      message: "GitHub's rate limit exceeded. Please try again in a few minutes.",
+    },
+    FETCH_FAILED: {
+      title: "Fetch failed",
+      message: "Failed to fetch the card. Please try again.",
+    },
+    INVALID_FORMAT: {
+      title: "Invalid card format",
+      message: "The card file is missing required YAML frontmatter.",
+    },
+    MISSING_TITLE: {
+      title: "Missing title",
+      message: "The card must have a title field in its frontmatter.",
+    },
+  };
 
-    // Get the ref (branch/tag) if not specified
-    const ref = parsed.ref || (await getDefaultBranch(parsed.owner, parsed.repo));
-
-    // Construct and fetch the card content
-    const fetchUrl = constructFetchURL(parsed, ref);
-    const content = await fetchCardContent(fetchUrl);
-
-    // Parse the card
-    const card = parseCard(content, parsed.owner);
-
-    // Render markdown body
-    const bodyHtml = card.body ? await renderMarkdown(card.body) : "";
-
-    // Get repo metadata
-    const metadata = await getRepoMetadata(parsed.owner, parsed.repo);
-
-    return (
-      <CardRenderer
-        card={card}
-        bodyHtml={bodyHtml}
-        owner={parsed.owner}
-        repo={parsed.repo}
-        metadata={metadata}
-      />
-    );
-  } catch (error) {
-    if (error instanceof GitHubURLError) {
-      switch (error.code) {
-        case "INVALID_URL":
-          redirect("/error/invalid-url");
-        case "CARD_NOT_FOUND":
-          redirect("/error/not-found");
-        case "PRIVATE_REPO":
-          redirect("/error/private");
-        case "RATE_LIMITED":
-          redirect("/error/rate-limit");
-        default:
-          redirect("/error/not-found");
-      }
-    }
-
-    if (error instanceof CardParseError) {
-      redirect("/error/invalid-url");
-    }
-
-    // Unknown error
-    console.error("Card fetch error:", error);
-    redirect("/error/not-found");
-  }
-}
-
-export default async function CardPage({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const url = params.url;
-
-  if (!url) {
-    redirect("/error/invalid-url");
-  }
+  const error = errors[code] || {
+    title: "Something went wrong",
+    message: "An unexpected error occurred.",
+  };
 
   return (
-    <Suspense fallback={<LoadingCard />}>
-      <CardContent url={url} />
-    </Suspense>
+    <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center px-4">
+      <div className="text-center max-w-md">
+        <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg
+            className="w-8 h-8 text-red-600 dark:text-red-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+        <h1 className="text-2xl font-bold mb-2">{error.title}</h1>
+        <p className="text-muted dark:text-muted-dark mb-6">{error.message}</p>
+        <a
+          href="/"
+          className="inline-block px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-md transition-colors"
+        >
+          Try Another URL
+        </a>
+      </div>
+    </div>
   );
 }
 
-export async function generateMetadata({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const url = params.url;
+function CardContent() {
+  const searchParams = useSearchParams();
+  const url = searchParams.get("url");
+  const [state, setState] = useState<CardState>({ status: "loading" });
 
-  if (!url) {
-    return { title: "Card Not Found - iShipped.io" };
+  useEffect(() => {
+    if (!url) {
+      setState({ status: "error", code: "INVALID_URL" });
+      return;
+    }
+
+    async function loadCard() {
+      setState({ status: "loading" });
+
+      try {
+        // Parse the GitHub URL
+        const parsed = parseGitHubURL(url!);
+
+        // Get the ref (branch/tag) if not specified
+        const ref =
+          parsed.ref || (await getDefaultBranch(parsed.owner, parsed.repo));
+
+        // Construct and fetch the card content
+        const fetchUrl = constructFetchURL(parsed, ref);
+        const content = await fetchCardContent(fetchUrl);
+
+        // Parse the card
+        const card = parseCard(content, parsed.owner);
+
+        // Render markdown body
+        const bodyHtml = card.body ? await renderMarkdown(card.body) : "";
+
+        // Get repo metadata
+        const metadata = await getRepoMetadata(parsed.owner, parsed.repo);
+
+        setState({
+          status: "success",
+          card,
+          bodyHtml,
+          owner: parsed.owner,
+          repo: parsed.repo,
+          metadata,
+        });
+
+        // Update document title
+        document.title = `${card.frontmatter.title} - iShipped.io`;
+      } catch (error) {
+        if (error instanceof GitHubURLError) {
+          setState({ status: "error", code: error.code });
+        } else if (error instanceof CardParseError) {
+          setState({ status: "error", code: error.code });
+        } else {
+          console.error("Card fetch error:", error);
+          setState({ status: "error", code: "FETCH_FAILED" });
+        }
+      }
+    }
+
+    loadCard();
+  }, [url]);
+
+  if (state.status === "loading") {
+    return <LoadingCard />;
   }
 
-  try {
-    const parsed = parseGitHubURL(url);
-    const ref = parsed.ref || (await getDefaultBranch(parsed.owner, parsed.repo));
-    const fetchUrl = constructFetchURL(parsed, ref);
-    const content = await fetchCardContent(fetchUrl);
-    const card = parseCard(content, parsed.owner);
-
-    return {
-      title: `${card.frontmatter.title} - iShipped.io`,
-      description: card.frontmatter.summary || `Project card for ${parsed.owner}/${parsed.repo}`,
-      openGraph: {
-        title: card.frontmatter.title,
-        description: card.frontmatter.summary,
-        images: card.frontmatter.hero ? [card.frontmatter.hero] : [],
-      },
-    };
-  } catch {
-    return { title: "Card - iShipped.io" };
+  if (state.status === "error") {
+    return <ErrorDisplay code={state.code} />;
   }
+
+  return (
+    <CardRenderer
+      card={state.card}
+      bodyHtml={state.bodyHtml}
+      owner={state.owner}
+      repo={state.repo}
+      metadata={state.metadata}
+    />
+  );
+}
+
+export default function CardPage() {
+  return (
+    <Suspense fallback={<LoadingCard />}>
+      <CardContent />
+    </Suspense>
+  );
 }
