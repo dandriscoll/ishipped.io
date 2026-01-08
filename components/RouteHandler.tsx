@@ -1,20 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { CardPageClient } from "@/components/CardPageClient";
 
 export function RouteHandler({ children }: { children: React.ReactNode }) {
   const [routeType, setRouteType] = useState<"loading" | "card" | "other">("loading");
+  const pathname = usePathname();
 
   useEffect(() => {
-    const pathname = window.location.pathname;
     // Check if this is a /card/ path with owner/repo
     if (pathname.match(/^\/card\/[^/]+\/[^/]+/)) {
       setRouteType("card");
     } else {
       setRouteType("other");
     }
-  }, []);
+  }, [pathname]);
 
   // Show nothing briefly while determining route
   if (routeType === "loading") {
