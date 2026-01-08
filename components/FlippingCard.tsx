@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const EXAMPLE_MARKDOWN = `---
 title: "My Awesome Project"
@@ -33,9 +33,31 @@ Describe your project in detail using Markdown.
 
 export function FlippingCard() {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [hasAutoFlipped, setHasAutoFlipped] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (hasAutoFlipped || !cardRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          setIsFlipped(true);
+          setHasAutoFlipped(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(cardRef.current);
+
+    return () => observer.disconnect();
+  }, [hasAutoFlipped]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" ref={cardRef}>
       <div
         className="flip-card mx-auto"
         style={{ height: "480px", maxWidth: "100%" }}

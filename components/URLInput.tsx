@@ -12,16 +12,27 @@ export function URLInput() {
     e.preventDefault();
     setError(null);
 
-    const trimmed = input.trim().replace(/^\//, ""); // Remove leading slash if present
+    let trimmed = input.trim();
     if (!trimmed) {
-      setError("Please enter a repository path");
+      setError("Please enter a repository path or GitHub URL");
       return;
+    }
+
+    // Parse GitHub URL if provided
+    const githubUrlMatch = trimmed.match(
+      /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+)\/([^/]+?)(?:\.git)?(?:\/.*)?$/i
+    );
+    if (githubUrlMatch) {
+      trimmed = `${githubUrlMatch[1]}/${githubUrlMatch[2]}`;
+    } else {
+      // Remove leading slash if present
+      trimmed = trimmed.replace(/^\//, "");
     }
 
     // Parse owner/repo format
     const segments = trimmed.split("/").filter(Boolean);
     if (segments.length < 2) {
-      setError("Please use the format: owner/repo");
+      setError("Please use the format: owner/repo or a GitHub URL");
       return;
     }
 
@@ -33,7 +44,7 @@ export function URLInput() {
       return;
     }
 
-    router.push(`/card/${trimmed}`);
+    router.push(`/card/${owner}/${repo}`);
   };
 
   return (
@@ -46,7 +57,7 @@ export function URLInput() {
             setInput(e.target.value);
             setError(null);
           }}
-          placeholder="owner/repo"
+          placeholder="owner/repo or GitHub URL"
           className="flex-1 px-4 py-3 rounded-lg border border-border dark:border-border-dark bg-white dark:bg-surface-dark focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent placeholder:text-muted dark:placeholder:text-muted-dark"
           aria-label="GitHub repository path"
         />

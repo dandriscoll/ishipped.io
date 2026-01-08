@@ -109,7 +109,7 @@ function ErrorDisplay({ code }: { code: string }) {
   );
 }
 
-export default function CardPage() {
+export function CardPageClient() {
   const [state, setState] = useState<CardState>({ status: "loading" });
   const [theme, setTheme] = useState<CardTheme>("default");
 
