@@ -1,0 +1,211 @@
+export interface ValidationError {
+  field: string;
+  message: string;
+  severity: "error" | "warning";
+}
+
+function isValidHttpsUrl(str: string): boolean {
+  try {
+    const url = new URL(str);
+    return url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function isValidHeroUrl(hero: string): boolean {
+  if (!isValidHttpsUrl(hero)) return false;
+  try {
+    const url = new URL(hero);
+    const allowedHosts = [
+      "raw.githubusercontent.com",
+      "user-images.githubusercontent.com",
+      "avatars.githubusercontent.com",
+      "i.imgur.com",
+    ];
+    return allowedHosts.some(
+      (h) => url.hostname === h || url.hostname.endsWith(`.${h}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
+function isValidShippedDate(shipped: string): boolean {
+  const isoDateRegex =
+    /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})?)?$/;
+  if (!isoDateRegex.test(shipped)) return false;
+  const date = new Date(shipped);
+  return !isNaN(date.getTime());
+}
+
+export interface BuilderState {
+  title: string;
+  summary: string;
+  hero: string;
+  shipped: string;
+  version: string;
+  tags: string[];
+  author: {
+    name: string;
+    github: string;
+    url: string;
+    avatar: string;
+  };
+  links: Array<{
+    id: string;
+    label: string;
+    url: string;
+    primary: boolean;
+  }>;
+  body: string;
+  repoOwner: string;
+  repoName: string;
+  loadingState: "idle" | "loading" | "loaded" | "error";
+  loadError: string | null;
+}
+
+export function validateBuilderState(state: BuilderState): ValidationError[] {
+  const errors: ValidationError[] = [];
+
+  // Title validation (required, max 100 chars)
+  if (!state.title.trim()) {
+    errors.push({
+      field: "title",
+      message: "Title is required",
+      severity: "error",
+    });
+  } else if (state.title.length > 100) {
+    errors.push({
+      field: "title",
+      message: "Title must be 100 characters or less",
+      severity: "error",
+    });
+  }
+
+  // Summary validation (max 280 chars)
+  if (state.summary.length > 280) {
+    errors.push({
+      field: "summary",
+      message: "Summary must be 280 characters or less",
+      severity: "error",
+    });
+  }
+
+  // Hero URL validation (HTTPS, allowed domains)
+  if (state.hero.trim() && !isValidHeroUrl(state.hero)) {
+    errors.push({
+      field: "hero",
+      message:
+        "Hero must be HTTPS URL from allowed domains (raw.githubusercontent.com, i.imgur.com, etc.)",
+      severity: "error",
+    });
+  }
+
+  // Shipped date validation (ISO 8601)
+  if (state.shipped.trim() && !isValidShippedDate(state.shipped)) {
+    errors.push({
+      field: "shipped",
+      message: "Shipped must be a valid date (YYYY-MM-DD)",
+      severity: "error",
+    });
+  }
+
+  // Version validation (max 20 chars)
+  if (state.version.length > 20) {
+    errors.push({
+      field: "version",
+      message: "Version must be 20 characters or less",
+      severity: "error",
+    });
+  }
+
+  // Tags validation (max 10, each max 30 chars)
+  const nonEmptyTags = state.tags.filter((t) => t.trim());
+  if (nonEmptyTags.length > 10) {
+    errors.push({
+      field: "tags",
+      message: "Maximum 10 tags allowed",
+      severity: "error",
+    });
+  }
+  state.tags.forEach((tag, i) => {
+    if (tag.trim() && tag.length > 30) {
+      errors.push({
+        field: `tags[${i}]`,
+        message: `Tag "${tag.slice(0, 20)}..." exceeds 30 characters`,
+        severity: "error",
+      });
+    }
+  });
+
+  // Links validation (max 10, each needs label/url, HTTPS)
+  const nonEmptyLinks = state.links.filter((l) => l.label.trim() || l.url.trim());
+  if (nonEmptyLinks.length > 10) {
+    errors.push({
+      field: "links",
+      message: "Maximum 10 links allowed",
+      severity: "error",
+    });
+  }
+  state.links.forEach((link, i) => {
+    if (!link.label.trim() && link.url.trim()) {
+      errors.push({
+        field: `links[${i}].label`,
+        message: "Link label is required",
+        severity: "error",
+      });
+    }
+    if (link.label.trim() && !link.url.trim()) {
+      errors.push({
+        field: `links[${i}].url`,
+        message: "Link URL is required",
+        severity: "error",
+      });
+    }
+    if (link.url.trim() && !isValidHttpsUrl(link.url)) {
+      errors.push({
+        field: `links[${i}].url`,
+        message: "Link URL must be HTTPS",
+        severity: "error",
+      });
+    }
+    if (link.label && link.label.length > 50) {
+      errors.push({
+        field: `links[${i}].label`,
+        message: "Link label must be 50 characters or less",
+        severity: "error",
+      });
+    }
+  });
+
+  // Author URL validation
+  if (state.author.url.trim() && !isValidHttpsUrl(state.author.url)) {
+    errors.push({
+      field: "author.url",
+      message: "Author URL must be HTTPS",
+      severity: "error",
+    });
+  }
+  if (state.author.avatar.trim() && !isValidHttpsUrl(state.author.avatar)) {
+    errors.push({
+      field: "author.avatar",
+      message: "Author avatar must be HTTPS URL",
+      severity: "error",
+    });
+  }
+
+  return errors;
+}
+
+export function getFieldError(
+  errors: ValidationError[],
+  field: string
+): string | undefined {
+  const error = errors.find((e) => e.field === field && e.severity === "error");
+  return error?.message;
+}
+
+export function hasErrors(errors: ValidationError[]): boolean {
+  return errors.some((e) => e.severity === "error");
+}

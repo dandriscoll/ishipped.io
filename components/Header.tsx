@@ -14,6 +14,12 @@ export function Header() {
           iShipped.io
         </Link>
         <div className="flex items-center gap-4">
+          <Link
+            href="/builder"
+            className="text-sm font-medium text-muted dark:text-muted-dark hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
+            Builder
+          </Link>
           <ThemeToggle />
           <a
             href="https://github.com/dandriscoll/ishipped.io"
