@@ -218,7 +218,10 @@ export function parseCard(content: string, repoOwner: string): ParsedCard {
 }
 
 export function formatShippedDate(dateStr: string): string {
-  const date = new Date(dateStr);
+  // Parse as local date to avoid timezone shift issues
+  // "2016-03-01" should display as March 1, not Feb 29 in western timezones
+  const [year, month, day] = dateStr.split("T")[0].split("-").map(Number);
+  const date = new Date(year, month - 1, day);
   return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
