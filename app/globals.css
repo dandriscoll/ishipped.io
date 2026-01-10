@@ -131,87 +131,177 @@
   --theme-primary-hover: #0860c7;
   --theme-card-bg: #ffffff;
   --theme-card-border: #e5e7eb;
+  --theme-page-bg: #f3f4f6;
+  --theme-page-accent: transparent;
+  --theme-overlay-opacity: 0;
+  --theme-orb-1: transparent;
+  --theme-orb-2: transparent;
 }
 
 .dark {
   --theme-card-bg: #161b22;
   --theme-card-border: #30363d;
+  --theme-page-bg: #0d1117;
 }
 
-/* Ocean theme */
+/* ============================================
+   OCEAN THEME - Waves and water-inspired
+   ============================================ */
 [data-card-theme="ocean"] {
   --theme-primary: #0891b2;
   --theme-primary-hover: #0e7490;
-  --theme-card-bg: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  --theme-card-border: #7dd3fc;
+  --theme-card-bg: linear-gradient(145deg, #ffffff 0%, #ecfeff 50%, #cffafe 100%);
+  --theme-card-border: #67e8f9;
+  --theme-page-bg: linear-gradient(180deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+  --theme-overlay-opacity: 0.4;
+  --theme-orb-1: rgba(34, 211, 238, 0.3);
+  --theme-orb-2: rgba(8, 145, 178, 0.2);
 }
 
 .dark [data-card-theme="ocean"],
 [data-card-theme="ocean"].dark-theme {
-  --theme-card-bg: linear-gradient(135deg, #0c4a6e 0%, #164e63 100%);
+  --theme-card-bg: linear-gradient(145deg, #164e63 0%, #0e4152 50%, #083344 100%);
   --theme-card-border: #0e7490;
+  --theme-page-bg: linear-gradient(180deg, #083344 0%, #042f3a 50%, #021a21 100%);
+  --theme-orb-1: rgba(34, 211, 238, 0.15);
+  --theme-orb-2: rgba(8, 145, 178, 0.1);
 }
 
-/* Forest theme */
+/* ============================================
+   FOREST THEME - Organic and natural
+   ============================================ */
 [data-card-theme="forest"] {
   --theme-primary: #16a34a;
   --theme-primary-hover: #15803d;
-  --theme-card-bg: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  --theme-card-bg: linear-gradient(145deg, #ffffff 0%, #f0fdf4 50%, #dcfce7 100%);
   --theme-card-border: #86efac;
+  --theme-page-bg: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+  --theme-overlay-opacity: 0.35;
+  --theme-orb-1: rgba(74, 222, 128, 0.3);
+  --theme-orb-2: rgba(22, 163, 74, 0.2);
 }
 
 .dark [data-card-theme="forest"],
 [data-card-theme="forest"].dark-theme {
-  --theme-card-bg: linear-gradient(135deg, #14532d 0%, #166534 100%);
+  --theme-card-bg: linear-gradient(145deg, #166534 0%, #14532d 50%, #052e16 100%);
   --theme-card-border: #15803d;
+  --theme-page-bg: linear-gradient(180deg, #052e16 0%, #022c0a 50%, #011a06 100%);
+  --theme-orb-1: rgba(74, 222, 128, 0.12);
+  --theme-orb-2: rgba(22, 163, 74, 0.08);
 }
 
-/* Sunset theme */
+/* ============================================
+   SUNSET THEME - Warm and radiant
+   ============================================ */
 [data-card-theme="sunset"] {
   --theme-primary: #ea580c;
   --theme-primary-hover: #c2410c;
-  --theme-card-bg: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  --theme-card-bg: linear-gradient(145deg, #ffffff 0%, #fff7ed 50%, #ffedd5 100%);
   --theme-card-border: #fdba74;
+  --theme-page-bg: linear-gradient(180deg, #fef3c7 0%, #fed7aa 50%, #fdba74 100%);
+  --theme-overlay-opacity: 0.3;
+  --theme-orb-1: rgba(251, 146, 60, 0.35);
+  --theme-orb-2: rgba(234, 88, 12, 0.2);
 }
 
 .dark [data-card-theme="sunset"],
 [data-card-theme="sunset"].dark-theme {
-  --theme-card-bg: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
+  --theme-card-bg: linear-gradient(145deg, #9a3412 0%, #7c2d12 50%, #431407 100%);
   --theme-card-border: #c2410c;
+  --theme-page-bg: linear-gradient(180deg, #431407 0%, #2a0d05 50%, #1a0803 100%);
+  --theme-orb-1: rgba(251, 146, 60, 0.15);
+  --theme-orb-2: rgba(234, 88, 12, 0.1);
 }
 
-/* Lavender theme */
+/* ============================================
+   LAVENDER THEME - Soft and elegant
+   ============================================ */
 [data-card-theme="lavender"] {
   --theme-primary: #9333ea;
   --theme-primary-hover: #7e22ce;
-  --theme-card-bg: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  --theme-card-bg: linear-gradient(145deg, #ffffff 0%, #faf5ff 50%, #f3e8ff 100%);
   --theme-card-border: #d8b4fe;
+  --theme-page-bg: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 50%, #e9d5ff 100%);
+  --theme-overlay-opacity: 0.35;
+  --theme-orb-1: rgba(192, 132, 252, 0.35);
+  --theme-orb-2: rgba(147, 51, 234, 0.2);
 }
 
 .dark [data-card-theme="lavender"],
 [data-card-theme="lavender"].dark-theme {
-  --theme-card-bg: linear-gradient(135deg, #581c87 0%, #6b21a8 100%);
+  --theme-card-bg: linear-gradient(145deg, #6b21a8 0%, #581c87 50%, #3b0764 100%);
   --theme-card-border: #7e22ce;
+  --theme-page-bg: linear-gradient(180deg, #3b0764 0%, #2e0550 50%, #1a022e 100%);
+  --theme-orb-1: rgba(192, 132, 252, 0.12);
+  --theme-orb-2: rgba(147, 51, 234, 0.08);
 }
 
-/* Midnight theme */
+/* ============================================
+   MIDNIGHT THEME - Cosmic and dreamy
+   ============================================ */
 [data-card-theme="midnight"] {
   --theme-primary: #6366f1;
   --theme-primary-hover: #4f46e5;
-  --theme-card-bg: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  --theme-card-bg: linear-gradient(145deg, #ffffff 0%, #eef2ff 50%, #e0e7ff 100%);
   --theme-card-border: #a5b4fc;
+  --theme-page-bg: linear-gradient(180deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+  --theme-overlay-opacity: 0.4;
+  --theme-orb-1: rgba(129, 140, 248, 0.35);
+  --theme-orb-2: rgba(99, 102, 241, 0.2);
 }
 
 .dark [data-card-theme="midnight"],
 [data-card-theme="midnight"].dark-theme {
-  --theme-card-bg: linear-gradient(135deg, #312e81 0%, #3730a3 100%);
+  --theme-card-bg: linear-gradient(145deg, #3730a3 0%, #312e81 50%, #1e1b4b 100%);
   --theme-card-border: #4f46e5;
+  --theme-page-bg: linear-gradient(180deg, #1e1b4b 0%, #0f0e29 50%, #030014 100%);
+  --theme-orb-1: rgba(129, 140, 248, 0.15);
+  --theme-orb-2: rgba(99, 102, 241, 0.1);
 }
 
-/* Apply theme to floating card */
+/* ============================================
+   THEMED PAGE BACKGROUND
+   ============================================ */
+.themed-page-bg {
+  background: var(--theme-page-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative orbs for themed backgrounds */
+.themed-page-bg::before,
+.themed-page-bg::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+}
+
+.themed-page-bg::before {
+  width: 600px;
+  height: 600px;
+  background: var(--theme-orb-1);
+  top: -200px;
+  right: -150px;
+}
+
+.themed-page-bg::after {
+  width: 500px;
+  height: 500px;
+  background: var(--theme-orb-2);
+  bottom: -150px;
+  left: -100px;
+}
+
+/* ============================================
+   THEMED CARD STYLES
+   ============================================ */
 .themed-card {
   background: var(--theme-card-bg);
   border-color: var(--theme-card-border);
+  position: relative;
+  overflow: hidden;
 }
 
 .themed-card .text-accent,
@@ -225,4 +315,152 @@
 
 .themed-card .bg-accent:hover {
   background-color: var(--theme-primary-hover);
+}
+
+/* Card content sits above overlays */
+.themed-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   THEME-SPECIFIC CARD OVERLAYS
+   ============================================ */
+
+/* Ocean theme - Wave pattern */
+[data-card-theme="ocean"] .theme-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: var(--theme-overlay-opacity);
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%2306b6d4' fill-opacity='0.4' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,218.7C672,235,768,245,864,234.7C960,224,1056,192,1152,181.3C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: 200% auto;
+}
+
+[data-card-theme="ocean"] .theme-overlay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+}
+
+/* Forest theme - Leaf/organic pattern */
+[data-card-theme="forest"] .theme-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: var(--theme-overlay-opacity);
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%2322c55e' fill-opacity='0.3'%3E%3Cpath d='M20 35c5-8 15-10 20-5s5 15-5 20-20 1-20-5 0-2 5-10z'/%3E%3Cpath d='M60 55c-5 8-15 10-20 5s-5-15 5-20 20-1 20 5 0 2-5 10z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  background-position: top right;
+}
+
+[data-card-theme="forest"] .theme-overlay::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(ellipse at bottom left, rgba(74, 222, 128, 0.25) 0%, transparent 60%);
+}
+
+[data-card-theme="forest"] .theme-overlay::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.15) 0%, transparent 70%);
+  transform: translate(20%, -20%);
+}
+
+/* Sunset theme - Warm rays */
+[data-card-theme="sunset"] .theme-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: var(--theme-overlay-opacity);
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at top right, rgba(251, 146, 60, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom left, rgba(234, 88, 12, 0.2) 0%, transparent 40%);
+}
+
+[data-card-theme="sunset"] .theme-overlay::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
+  background: conic-gradient(from 180deg, transparent 0deg, rgba(251, 191, 36, 0.15) 30deg, transparent 60deg, rgba(251, 146, 60, 0.1) 90deg, transparent 120deg);
+  border-radius: 50%;
+}
+
+/* Lavender theme - Soft geometric */
+[data-card-theme="lavender"] .theme-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: var(--theme-overlay-opacity);
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(192, 132, 252, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.2) 0%, transparent 25%);
+}
+
+[data-card-theme="lavender"] .theme-overlay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='4' fill='%239333ea' fill-opacity='0.08'/%3E%3Ccircle cx='10' cy='10' r='2' fill='%239333ea' fill-opacity='0.06'/%3E%3Ccircle cx='50' cy='50' r='2' fill='%239333ea' fill-opacity='0.06'/%3E%3C/svg%3E");
+  background-size: 60px 60px;
+}
+
+/* Midnight theme - Stars/constellation */
+[data-card-theme="midnight"] .theme-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: var(--theme-overlay-opacity);
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(129, 140, 248, 0.3) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 80%, rgba(99, 102, 241, 0.2) 0%, transparent 35%);
+}
+
+[data-card-theme="midnight"] .theme-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(199, 210, 254, 0.8), transparent),
+    radial-gradient(2px 2px at 60px 70px, rgba(165, 180, 252, 0.6), transparent),
+    radial-gradient(1px 1px at 90px 20px, rgba(199, 210, 254, 0.5), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(129, 140, 248, 0.7), transparent),
+    radial-gradient(1px 1px at 160px 40px, rgba(165, 180, 252, 0.4), transparent),
+    radial-gradient(2px 2px at 200px 90px, rgba(199, 210, 254, 0.6), transparent),
+    radial-gradient(1px 1px at 40px 100px, rgba(129, 140, 248, 0.5), transparent),
+    radial-gradient(2px 2px at 110px 120px, rgba(165, 180, 252, 0.7), transparent);
+  background-size: 220px 150px;
+}
+
+/* Dark mode adjustments for overlays */
+.dark [data-card-theme="ocean"] .theme-overlay,
+.dark [data-card-theme="forest"] .theme-overlay,
+.dark [data-card-theme="sunset"] .theme-overlay,
+.dark [data-card-theme="lavender"] .theme-overlay,
+.dark [data-card-theme="midnight"] .theme-overlay {
+  opacity: calc(var(--theme-overlay-opacity) * 0.7);
 }

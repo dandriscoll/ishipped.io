@@ -31,11 +31,16 @@ export function CardRenderer({
       : { name: frontmatter.author || owner, github: owner };
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] py-8 px-4 md:py-12 md:px-6 bg-gray-100 dark:bg-bg-dark">
+    <div
+      className="min-h-[calc(100vh-3.5rem)] py-8 px-4 md:py-12 md:px-6 themed-page-bg"
+      data-card-theme={theme !== "default" ? theme : undefined}
+    >
       <article
         className="max-w-3xl mx-auto floating-card themed-card p-6 md:p-8"
         data-card-theme={theme !== "default" ? theme : undefined}
       >
+        {/* Theme-specific decorative overlay */}
+        {theme !== "default" && <div className="theme-overlay" aria-hidden="true" />}
       {/* Hero Image */}
       {frontmatter.hero && (
         <div className="mb-8 rounded-lg overflow-hidden">
