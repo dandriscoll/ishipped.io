@@ -9,6 +9,7 @@ const THEMES = [
   { id: "sunset", name: "Sunset", color: "#ea580c" },
   { id: "lavender", name: "Lavender", color: "#9333ea" },
   { id: "midnight", name: "Midnight", color: "#6366f1" },
+  { id: "ruby", name: "Ruby", color: "#dc2626" },
 ] as const;
 
 export type CardTheme = (typeof THEMES)[number]["id"];

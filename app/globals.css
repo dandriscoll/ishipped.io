@@ -260,6 +260,29 @@
 }
 
 /* ============================================
+   RUBY THEME - Bold and passionate
+   ============================================ */
+[data-card-theme="ruby"] {
+  --theme-primary: #dc2626;
+  --theme-primary-hover: #b91c1c;
+  --theme-card-bg: linear-gradient(145deg, #ffffff 0%, #fef2f2 50%, #fee2e2 100%);
+  --theme-card-border: #fca5a5;
+  --theme-page-bg: linear-gradient(180deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+  --theme-overlay-opacity: 0.35;
+  --theme-orb-1: rgba(248, 113, 113, 0.35);
+  --theme-orb-2: rgba(220, 38, 38, 0.2);
+}
+
+.dark [data-card-theme="ruby"],
+[data-card-theme="ruby"].dark-theme {
+  --theme-card-bg: linear-gradient(145deg, #991b1b 0%, #7f1d1d 50%, #450a0a 100%);
+  --theme-card-border: #b91c1c;
+  --theme-page-bg: linear-gradient(180deg, #450a0a 0%, #2a0606 50%, #1a0303 100%);
+  --theme-orb-1: rgba(248, 113, 113, 0.15);
+  --theme-orb-2: rgba(220, 38, 38, 0.1);
+}
+
+/* ============================================
    THEMED PAGE BACKGROUND
    ============================================ */
 .themed-page-bg {
@@ -456,11 +479,42 @@
   background-size: 220px 150px;
 }
 
+/* Ruby theme - Gem facets */
+[data-card-theme="ruby"] .theme-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: var(--theme-overlay-opacity);
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at top right, rgba(248, 113, 113, 0.4) 0%, transparent 45%),
+    radial-gradient(ellipse at bottom left, rgba(220, 38, 38, 0.25) 0%, transparent 40%);
+}
+
+[data-card-theme="ruby"] .theme-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpolygon points='30,5 55,30 30,55 5,30' fill='none' stroke='%23dc2626' stroke-opacity='0.08' stroke-width='1'/%3E%3Cpolygon points='30,15 45,30 30,45 15,30' fill='%23dc2626' fill-opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 80px 80px;
+}
+
+[data-card-theme="ruby"] .theme-overlay::after {
+  content: "";
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(252, 165, 165, 0.3) 0%, transparent 60%);
+  border-radius: 50%;
+}
+
 /* Dark mode adjustments for overlays */
 .dark [data-card-theme="ocean"] .theme-overlay,
 .dark [data-card-theme="forest"] .theme-overlay,
 .dark [data-card-theme="sunset"] .theme-overlay,
 .dark [data-card-theme="lavender"] .theme-overlay,
-.dark [data-card-theme="midnight"] .theme-overlay {
+.dark [data-card-theme="midnight"] .theme-overlay,
+.dark [data-card-theme="ruby"] .theme-overlay {
   opacity: calc(var(--theme-overlay-opacity) * 0.7);
 }
