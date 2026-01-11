@@ -34,6 +34,8 @@
 | `author` | Author object or string | repo owner | Project author (see below) |
 | `links` | Link[] | `[]` | Primary project links (max 10) |
 | `version` | string | `null` | Version identifier (semver preferred) |
+| `repo` | Repo object | hosting repo | Source repository override (see below) |
+| `collaborators` | string[] | `[]` | GitHub usernames of contributors (max 20) |
 
 #### Author Object
 
@@ -57,6 +59,34 @@ links:
     url: "https://..."       # Required: Target URL (HTTPS only)
     primary: true            # Optional: Highlight as primary CTA (max 1)
 ```
+
+#### Repo Object
+
+Use `repo` to specify a different source repository than where the card is hosted. This is useful when you want to host a card in one repo (e.g., a portfolio site) but link to the actual project's repository.
+
+```yaml
+repo:
+  owner: "facebook"          # Required: GitHub username or organization
+  name: "react"              # Required: Repository name
+```
+
+When `repo` is specified, the card footer will link to the specified repository instead of the hosting repository. If omitted, the repository containing the card is used.
+
+#### Collaborators Array
+
+List GitHub usernames of people who contributed to the project. Each collaborator is displayed with their GitHub avatar and a link to their profile.
+
+```yaml
+collaborators:
+  - "octocat"                # GitHub username (without @)
+  - "defunkt"
+  - "mojombo"
+```
+
+**Constraints:**
+- Maximum 20 collaborators
+- Each username must be a valid GitHub username (alphanumeric, hyphens, max 39 chars)
+- The `@` prefix is optional and will be stripped if present
 
 #### Validation Rules
 
@@ -92,6 +122,8 @@ spec: "1"  # Reserved for future use
 | `author.avatar` | Author avatar (48x48) | GitHub avatar via `github.com/<username>.png` |
 | `links` | Button list; `primary: true` gets accent style | Hidden if empty |
 | `version` | Version badge next to title | Hidden if missing |
+| `repo` | Repository link in footer | Hosting repository |
+| `collaborators` | Avatar list with GitHub links | Hidden if empty |
 
 #### Markdown Body Rendering
 
@@ -178,6 +210,13 @@ links:
     url: "https://docs.cloudsync.pro"
   - label: "Discord Community"
     url: "https://discord.gg/cloudsync"
+repo:
+  owner: "acme"
+  name: "cloudsync"
+collaborators:
+  - "mikejohnson"
+  - "emilywang"
+  - "alexkim"
 ---
 
 ## What is CloudSync Pro?
@@ -917,6 +956,9 @@ links:
   - label: "Live Site"
     url: "https://example.com"
     primary: true
+collaborators:
+  - "teammate1"
+  - "teammate2"
 ---
 
 ## About
