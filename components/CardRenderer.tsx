@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { ParsedCard } from "@/lib/card";
 import type { RepoMetadata } from "@/lib/github";
-import { formatShippedDate, formatStars } from "@/lib/card";
+import { formatShippedDate, formatStars, resolveHeroUrl } from "@/lib/card";
 import { AuthorBlock } from "./AuthorBlock";
 import { TagList } from "./TagList";
 import { LinkButtons } from "./LinkButtons";
@@ -12,6 +12,7 @@ interface CardRendererProps {
   bodyHtml: string;
   owner: string;
   repo: string;
+  ref: string;
   metadata: RepoMetadata;
   theme?: CardTheme;
 }
@@ -21,6 +22,7 @@ export function CardRenderer({
   bodyHtml,
   owner,
   repo,
+  ref,
   metadata,
   theme = "default",
 }: CardRendererProps) {
@@ -35,6 +37,9 @@ export function CardRenderer({
   const displayRepoName = frontmatter.repo?.name || repo;
   const collaborators = frontmatter.collaborators || [];
 
+  // Resolve relative hero URL to absolute GitHub raw URL
+  const resolvedHeroUrl = resolveHeroUrl(frontmatter.hero, owner, repo, ref);
+
   return (
     <div
       className="min-h-[calc(100vh-3.5rem)] py-8 px-4 md:py-12 md:px-6 themed-page-bg"
@@ -47,10 +52,10 @@ export function CardRenderer({
         {/* Theme-specific decorative overlay */}
         {theme !== "default" && <div className="theme-overlay" aria-hidden="true" />}
       {/* Hero Image */}
-      {frontmatter.hero && (
+      {resolvedHeroUrl && (
         <div className="mb-8 rounded-lg overflow-hidden">
           <Image
-            src={frontmatter.hero}
+            src={resolvedHeroUrl}
             alt={frontmatter.title}
             width={800}
             height={400}

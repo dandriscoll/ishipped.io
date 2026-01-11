@@ -22,6 +22,7 @@ type CardState =
       bodyHtml: string;
       owner: string;
       repo: string;
+      ref: string;
       metadata: RepoMetadata;
     };
 
@@ -164,8 +165,10 @@ export function CardPageClient() {
         // Render markdown body
         const bodyHtml = card.body ? await renderMarkdown(card.body) : "";
 
-        // Get repo metadata
-        const metadata = await getRepoMetadata(owner, repo);
+        // Get repo metadata - use override repo if specified, otherwise hosting repo
+        const metadataOwner = card.frontmatter.repo?.owner || owner;
+        const metadataRepo = card.frontmatter.repo?.name || repo;
+        const metadata = await getRepoMetadata(metadataOwner, metadataRepo);
 
         setState({
           status: "success",
@@ -173,6 +176,7 @@ export function CardPageClient() {
           bodyHtml,
           owner,
           repo,
+          ref,
           metadata,
         });
 
@@ -213,6 +217,7 @@ export function CardPageClient() {
         bodyHtml={state.bodyHtml}
         owner={state.owner}
         repo={state.repo}
+        ref={state.ref}
         metadata={state.metadata}
         theme={theme}
       />

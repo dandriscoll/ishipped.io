@@ -126,13 +126,29 @@ function validateTags(tags: unknown): string[] {
     .slice(0, 10);
 }
 
+function isRelativePath(path: string): boolean {
+  // Check if it's a relative path (not a full URL)
+  return !path.startsWith("http://") && !path.startsWith("https://") && !path.startsWith("data:");
+}
+
 function validateHeroUrl(hero: unknown): string | undefined {
   if (typeof hero !== "string") return undefined;
-  if (!isValidHttpsUrl(hero)) return undefined;
 
-  // Only allow certain domains for hero images
+  const trimmed = hero.trim();
+  if (!trimmed) return undefined;
+
+  // Allow relative paths (will be resolved later with repo context)
+  if (isRelativePath(trimmed)) {
+    // Basic validation for relative paths
+    if (trimmed.includes("..")) return undefined; // No parent directory traversal
+    return trimmed;
+  }
+
+  // For absolute URLs, require HTTPS and allowed hosts
+  if (!isValidHttpsUrl(trimmed)) return undefined;
+
   try {
-    const url = new URL(hero);
+    const url = new URL(trimmed);
     const allowedHosts = [
       "raw.githubusercontent.com",
       "user-images.githubusercontent.com",
@@ -142,10 +158,29 @@ function validateHeroUrl(hero: unknown): string | undefined {
     if (!allowedHosts.some((h) => url.hostname === h || url.hostname.endsWith(`.${h}`))) {
       return undefined;
     }
-    return hero;
+    return trimmed;
   } catch {
     return undefined;
   }
+}
+
+export function resolveHeroUrl(
+  hero: string | undefined,
+  owner: string,
+  repo: string,
+  ref: string
+): string | undefined {
+  if (!hero) return undefined;
+
+  // If it's already an absolute URL, return as-is
+  if (!isRelativePath(hero)) {
+    return hero;
+  }
+
+  // Resolve relative path to GitHub raw URL
+  // Remove leading ./ if present
+  const cleanPath = hero.replace(/^\.\//, "");
+  return `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${cleanPath}`;
 }
 
 function validateShippedDate(shipped: unknown): string | undefined {

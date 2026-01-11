@@ -28,7 +28,7 @@
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `summary` | string | `null` | One-line description (max 280 chars) |
-| `hero` | URL string | `null` | Hero image URL (must be HTTPS) |
+| `hero` | URL or path | `null` | Hero image URL (HTTPS) or relative path (e.g., `hero.png`) |
 | `shipped` | ISO 8601 date | `null` | Ship date (e.g., `2024-03-15`) |
 | `tags` | string[] | `[]` | Categorical tags (max 10, each max 30 chars) |
 | `author` | Author object or string | repo owner | Project author (see below) |
@@ -288,11 +288,20 @@ const ALLOWED_ATTR = {
 - `githubusercontent.com` subdomains
 - `i.imgur.com` (common for READMEs)
 - `github.com/*.png` (avatars)
+- Relative paths (resolved to `raw.githubusercontent.com/<owner>/<repo>/<ref>/<path>`)
+
+**Relative path examples:**
+```yaml
+hero: "hero.png"              # Resolves to repo root
+hero: ".ishipped/hero.png"    # Resolves to .ishipped folder
+hero: "./assets/banner.jpg"   # Resolves to assets folder
+```
 
 **Blocked:**
 - Data URLs over 10KB
 - `http://` URLs
 - Any domain not in allowlist
+- Parent directory traversal (`..`)
 
 **Recommendation:** Proxy images through a sanitizing CDN (e.g., Cloudflare Images, imgix) to:
 - Prevent IP leakage to image hosts

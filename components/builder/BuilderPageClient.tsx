@@ -308,6 +308,7 @@ export function BuilderPageClient() {
                   bodyHtml={bodyHtml}
                   owner={state.repoOwner || "owner"}
                   repo={state.repoName || "repo"}
+                  ref="main"
                   metadata={previewMetadata}
                   theme={theme}
                 />
