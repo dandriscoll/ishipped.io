@@ -16,9 +16,10 @@ export type CardTheme = (typeof THEMES)[number]["id"];
 
 interface ThemePickerProps {
   onThemeChange?: (theme: CardTheme) => void;
+  dropUp?: boolean;
 }
 
-export function ThemePicker({ onThemeChange }: ThemePickerProps) {
+export function ThemePicker({ onThemeChange, dropUp = false }: ThemePickerProps) {
   const [selectedTheme, setSelectedTheme] = useState<CardTheme>("default");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -52,7 +53,7 @@ export function ThemePicker({ onThemeChange }: ThemePickerProps) {
         />
         <span className="text-gray-700 dark:text-gray-300">{currentTheme.name}</span>
         <svg
-          className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`w-4 h-4 text-gray-500 transition-transform ${isOpen !== dropUp ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -64,7 +65,7 @@ export function ThemePicker({ onThemeChange }: ThemePickerProps) {
       {isOpen && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-lg shadow-lg z-20 py-1">
+          <div className={`absolute right-0 w-48 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-lg shadow-lg z-20 py-1 ${dropUp ? "bottom-full mb-2" : "mt-2"}`}>
             {THEMES.map((theme) => (
               <button
                 key={theme.id}

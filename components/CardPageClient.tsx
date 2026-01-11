@@ -205,7 +205,7 @@ export function CardPageClient() {
     <div className="relative">
       {/* Theme Picker - fixed position */}
       <div className="fixed bottom-4 right-4 z-50">
-        <ThemePicker onThemeChange={handleThemeChange} />
+        <ThemePicker onThemeChange={handleThemeChange} dropUp />
       </div>
 
       <CardRenderer
