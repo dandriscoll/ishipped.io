@@ -33,6 +33,8 @@ function createInitialState(): BuilderState {
     tags: [],
     author: { name: "", github: "", url: "", avatar: "" },
     links: [],
+    repo: { owner: "", name: "" },
+    collaborators: [],
     body: "",
     repoOwner: "",
     repoName: "",
@@ -46,6 +48,8 @@ type BuilderAction =
   | { type: "SET_TAGS"; tags: string[] }
   | { type: "SET_LINKS"; links: BuilderState["links"] }
   | { type: "SET_AUTHOR_FIELD"; field: keyof BuilderState["author"]; value: string }
+  | { type: "SET_REPO_FIELD"; field: keyof BuilderState["repo"]; value: string }
+  | { type: "SET_COLLABORATORS"; collaborators: string[] }
   | { type: "LOAD_FROM_CARD"; card: ParsedCard; owner: string; repo: string }
   | { type: "LOAD_FROM_METADATA"; metadata: RepoMetadata; owner: string; repo: string }
   | { type: "SET_LOADING"; state: BuilderState["loadingState"]; error?: string }
@@ -67,6 +71,15 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         ...state,
         author: { ...state.author, [action.field]: action.value },
       };
+
+    case "SET_REPO_FIELD":
+      return {
+        ...state,
+        repo: { ...state.repo, [action.field]: action.value },
+      };
+
+    case "SET_COLLABORATORS":
+      return { ...state, collaborators: action.collaborators };
 
     case "LOAD_FROM_CARD": {
       const { frontmatter, body } = action.card;
@@ -97,6 +110,11 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           url: l.url,
           primary: l.primary || false,
         })),
+        repo: {
+          owner: frontmatter.repo?.owner || "",
+          name: frontmatter.repo?.name || "",
+        },
+        collaborators: frontmatter.collaborators || [],
         body: body || "",
         repoOwner: action.owner,
         repoName: action.repo,
@@ -182,6 +200,11 @@ export function BuilderPageClient() {
         links: state.links
           .filter((l) => l.label && l.url)
           .map(({ label, url, primary }) => ({ label, url, primary })),
+        repo:
+          state.repo.owner && state.repo.name
+            ? { owner: state.repo.owner, name: state.repo.name }
+            : undefined,
+        collaborators: state.collaborators.filter(Boolean),
       },
       body: state.body,
     };

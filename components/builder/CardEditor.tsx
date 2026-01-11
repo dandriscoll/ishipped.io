@@ -10,13 +10,17 @@ import { FieldEditor } from "./FieldEditor";
 import { TagEditor } from "./TagEditor";
 import { LinkEditor } from "./LinkEditor";
 import { AuthorEditor } from "./AuthorEditor";
+import { RepoOverrideEditor } from "./RepoOverrideEditor";
+import { CollaboratorsEditor } from "./CollaboratorsEditor";
 import { MarkdownEditor } from "./MarkdownEditor";
 
 type BuilderAction =
   | { type: "SET_FIELD"; field: keyof BuilderState; value: string }
   | { type: "SET_TAGS"; tags: string[] }
   | { type: "SET_LINKS"; links: BuilderState["links"] }
-  | { type: "SET_AUTHOR_FIELD"; field: keyof BuilderState["author"]; value: string };
+  | { type: "SET_AUTHOR_FIELD"; field: keyof BuilderState["author"]; value: string }
+  | { type: "SET_REPO_FIELD"; field: keyof BuilderState["repo"]; value: string }
+  | { type: "SET_COLLABORATORS"; collaborators: string[] };
 
 interface CardEditorProps {
   state: BuilderState;
@@ -114,6 +118,24 @@ export function CardEditor({ state, dispatch, errors }: CardEditorProps) {
         author={state.author}
         onChange={(field, value) =>
           dispatch({ type: "SET_AUTHOR_FIELD", field, value })
+        }
+        errors={errors}
+      />
+
+      {/* Collaborators */}
+      <CollaboratorsEditor
+        collaborators={state.collaborators}
+        onChange={(collaborators) =>
+          dispatch({ type: "SET_COLLABORATORS", collaborators })
+        }
+        error={getFieldError(errors, "collaborators")}
+      />
+
+      {/* Repo Override */}
+      <RepoOverrideEditor
+        repo={state.repo}
+        onChange={(field, value) =>
+          dispatch({ type: "SET_REPO_FIELD", field, value })
         }
         errors={errors}
       />

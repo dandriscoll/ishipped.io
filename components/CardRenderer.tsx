@@ -30,6 +30,11 @@ export function CardRenderer({
       ? frontmatter.author
       : { name: frontmatter.author || owner, github: owner };
 
+  // Use repo override if provided, otherwise fall back to the hosting repo
+  const displayRepoOwner = frontmatter.repo?.owner || owner;
+  const displayRepoName = frontmatter.repo?.name || repo;
+  const collaborators = frontmatter.collaborators || [];
+
   return (
     <div
       className="min-h-[calc(100vh-3.5rem)] py-8 px-4 md:py-12 md:px-6 themed-page-bg"
@@ -110,17 +115,44 @@ export function CardRenderer({
           )}
         </div>
 
+        {/* Collaborators */}
+        {collaborators.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-sm font-medium text-muted dark:text-muted-dark mb-3">
+              Collaborators
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {collaborators.map((collab) => (
+                <a
+                  key={collab}
+                  href={`https://github.com/${collab}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <img
+                    src={`https://github.com/${collab}.png?size=32`}
+                    alt={collab}
+                    className="w-5 h-5 rounded-full"
+                  />
+                  <span className="text-sm font-medium">@{collab}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Repo Info */}
         <div className="mt-6 p-4 bg-gray-50 dark:bg-surface-dark rounded-lg">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm">
               <a
-                href={`https://github.com/${owner}/${repo}`}
+                href={`https://github.com/${displayRepoOwner}/${displayRepoName}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium hover:text-accent transition-colors"
               >
-                {owner}/{repo}
+                {displayRepoOwner}/{displayRepoName}
               </a>
               {metadata.stars > 0 && (
                 <>
@@ -143,7 +175,7 @@ export function CardRenderer({
               )}
             </div>
             <a
-              href={`https://github.com/${owner}/${repo}`}
+              href={`https://github.com/${displayRepoOwner}/${displayRepoName}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-accent hover:underline inline-flex items-center gap-1"

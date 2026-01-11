@@ -13,6 +13,11 @@ export interface CardAuthor {
   avatar?: string;
 }
 
+export interface CardRepo {
+  owner: string;
+  name: string;
+}
+
 export interface CardFrontmatter {
   title: string;
   summary?: string;
@@ -22,6 +27,8 @@ export interface CardFrontmatter {
   tags?: string[];
   author?: CardAuthor | string;
   links?: CardLink[];
+  repo?: CardRepo;
+  collaborators?: string[];
 }
 
 export interface ParsedCard {
@@ -154,6 +161,35 @@ function validateShippedDate(shipped: unknown): string | undefined {
   return shipped;
 }
 
+function validateRepo(repo: unknown): CardRepo | undefined {
+  if (!repo || typeof repo !== "object") return undefined;
+
+  const obj = repo as Record<string, unknown>;
+  const owner = typeof obj.owner === "string" ? obj.owner.trim() : "";
+  const name = typeof obj.name === "string" ? obj.name.trim() : "";
+
+  if (!owner || !name) return undefined;
+
+  // Validate GitHub username/repo name format (alphanumeric, hyphens, underscores)
+  const validPattern = /^[a-zA-Z0-9_-]+$/;
+  if (!validPattern.test(owner) || !validPattern.test(name)) return undefined;
+
+  return { owner, name };
+}
+
+function validateCollaborators(collaborators: unknown): string[] {
+  if (!Array.isArray(collaborators)) return [];
+
+  // Validate GitHub username format
+  const validPattern = /^[a-zA-Z0-9_-]+$/;
+
+  return collaborators
+    .filter((c): c is string => typeof c === "string")
+    .map((c) => c.trim())
+    .filter((c) => c.length > 0 && c.length <= 39 && validPattern.test(c))
+    .slice(0, 20); // Max 20 collaborators
+}
+
 export function parseCard(content: string, repoOwner: string): ParsedCard {
   // Extract frontmatter between --- delimiters
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
@@ -209,6 +245,8 @@ export function parseCard(content: string, repoOwner: string): ParsedCard {
     tags: validateTags(frontmatterRaw.tags),
     author: validateAuthor(frontmatterRaw.author, repoOwner),
     links: validateLinks(frontmatterRaw.links),
+    repo: validateRepo(frontmatterRaw.repo),
+    collaborators: validateCollaborators(frontmatterRaw.collaborators),
   };
 
   return {

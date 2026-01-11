@@ -60,6 +60,22 @@ export function generateCardMarkdown(state: BuilderState): string {
     frontmatter.links = validLinks;
   }
 
+  // Repo override (only if both owner and name are provided)
+  if (state.repo?.owner?.trim() && state.repo?.name?.trim()) {
+    frontmatter.repo = {
+      owner: state.repo.owner.trim(),
+      name: state.repo.name.trim(),
+    };
+  }
+
+  // Collaborators (only non-empty)
+  const validCollaborators = state.collaborators
+    .filter((c) => c.trim())
+    .map((c) => c.trim());
+  if (validCollaborators.length > 0) {
+    frontmatter.collaborators = validCollaborators;
+  }
+
   // Generate YAML with specific options for readability
   const yamlStr = stringify(frontmatter, {
     indent: 2,

@@ -58,6 +58,11 @@ export interface BuilderState {
     url: string;
     primary: boolean;
   }>;
+  repo: {
+    owner: string;
+    name: string;
+  };
+  collaborators: string[];
   body: string;
   repoOwner: string;
   repoName: string;
@@ -194,6 +199,65 @@ export function validateBuilderState(state: BuilderState): ValidationError[] {
       severity: "error",
     });
   }
+
+  // Repo override validation (if either is provided, both must be)
+  const validGitHubPattern = /^[a-zA-Z0-9_-]+$/;
+  const hasRepoOwner = state.repo.owner.trim();
+  const hasRepoName = state.repo.name.trim();
+  if (hasRepoOwner && !hasRepoName) {
+    errors.push({
+      field: "repo.name",
+      message: "Repository name is required when owner is specified",
+      severity: "error",
+    });
+  }
+  if (hasRepoName && !hasRepoOwner) {
+    errors.push({
+      field: "repo.owner",
+      message: "Repository owner is required when name is specified",
+      severity: "error",
+    });
+  }
+  if (hasRepoOwner && !validGitHubPattern.test(state.repo.owner)) {
+    errors.push({
+      field: "repo.owner",
+      message: "Invalid GitHub username format",
+      severity: "error",
+    });
+  }
+  if (hasRepoName && !validGitHubPattern.test(state.repo.name)) {
+    errors.push({
+      field: "repo.name",
+      message: "Invalid repository name format",
+      severity: "error",
+    });
+  }
+
+  // Collaborators validation (max 20, valid GitHub usernames)
+  const nonEmptyCollaborators = state.collaborators.filter((c) => c.trim());
+  if (nonEmptyCollaborators.length > 20) {
+    errors.push({
+      field: "collaborators",
+      message: "Maximum 20 collaborators allowed",
+      severity: "error",
+    });
+  }
+  state.collaborators.forEach((collab, i) => {
+    if (collab.trim() && !validGitHubPattern.test(collab)) {
+      errors.push({
+        field: `collaborators[${i}]`,
+        message: `"${collab.slice(0, 20)}..." is not a valid GitHub username`,
+        severity: "error",
+      });
+    }
+    if (collab.trim() && collab.length > 39) {
+      errors.push({
+        field: `collaborators[${i}]`,
+        message: `GitHub username too long (max 39 characters)`,
+        severity: "error",
+      });
+    }
+  });
 
   return errors;
 }
