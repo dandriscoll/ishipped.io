@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -9,8 +10,15 @@ export function Header() {
       <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
         <Link
           href="/"
-          className="font-semibold text-lg hover:text-accent transition-colors"
+          className="flex items-center gap-2 font-semibold text-lg hover:text-accent transition-colors"
         >
+          <Image
+            src="/ishipped.io.jpg"
+            alt="iShipped.io logo"
+            width={32}
+            height={32}
+            className="rounded"
+          />
           iShipped.io
         </Link>
         <div className="flex items-center gap-4">

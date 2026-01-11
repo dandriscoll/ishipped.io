@@ -288,13 +288,20 @@ const ALLOWED_ATTR = {
 - `githubusercontent.com` subdomains
 - `i.imgur.com` (common for READMEs)
 - `github.com/*.png` (avatars)
-- Relative paths (resolved to `raw.githubusercontent.com/<owner>/<repo>/<ref>/<path>`)
+- Relative paths (resolved relative to the card's directory)
 
 **Relative path examples:**
+
+For a card at `.ishipped/card.md`:
 ```yaml
-hero: "hero.png"              # Resolves to repo root
-hero: ".ishipped/hero.png"    # Resolves to .ishipped folder
-hero: "./assets/banner.jpg"   # Resolves to assets folder
+hero: "hero.png"              # Resolves to .ishipped/hero.png
+hero: "./hero.png"            # Resolves to .ishipped/hero.png
+hero: "assets/banner.jpg"     # Resolves to .ishipped/assets/banner.jpg
+```
+
+For a card at `docs/showcase.md`:
+```yaml
+hero: "images/hero.png"       # Resolves to docs/images/hero.png
 ```
 
 **Blocked:**

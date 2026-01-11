@@ -23,6 +23,7 @@ type CardState =
       owner: string;
       repo: string;
       ref: string;
+      cardPath: string;
       metadata: RepoMetadata;
     };
 
@@ -170,6 +171,9 @@ export function CardPageClient() {
         const metadataRepo = card.frontmatter.repo?.name || repo;
         const metadata = await getRepoMetadata(metadataOwner, metadataRepo);
 
+        // Card path for resolving relative URLs
+        const cardPath = filePath || ".ishipped/card.md";
+
         setState({
           status: "success",
           card,
@@ -177,6 +181,7 @@ export function CardPageClient() {
           owner,
           repo,
           ref,
+          cardPath,
           metadata,
         });
 
@@ -218,6 +223,7 @@ export function CardPageClient() {
         owner={state.owner}
         repo={state.repo}
         ref={state.ref}
+        cardPath={state.cardPath}
         metadata={state.metadata}
         theme={theme}
       />

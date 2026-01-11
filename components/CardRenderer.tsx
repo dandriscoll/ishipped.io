@@ -13,6 +13,7 @@ interface CardRendererProps {
   owner: string;
   repo: string;
   ref: string;
+  cardPath?: string;
   metadata: RepoMetadata;
   theme?: CardTheme;
 }
@@ -23,6 +24,7 @@ export function CardRenderer({
   owner,
   repo,
   ref,
+  cardPath = ".ishipped/card.md",
   metadata,
   theme = "default",
 }: CardRendererProps) {
@@ -37,8 +39,8 @@ export function CardRenderer({
   const displayRepoName = frontmatter.repo?.name || repo;
   const collaborators = frontmatter.collaborators || [];
 
-  // Resolve relative hero URL to absolute GitHub raw URL
-  const resolvedHeroUrl = resolveHeroUrl(frontmatter.hero, owner, repo, ref);
+  // Resolve relative hero URL to absolute GitHub raw URL (relative to card location)
+  const resolvedHeroUrl = resolveHeroUrl(frontmatter.hero, owner, repo, ref, cardPath);
 
   return (
     <div

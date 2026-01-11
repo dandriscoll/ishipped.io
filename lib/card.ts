@@ -168,7 +168,8 @@ export function resolveHeroUrl(
   hero: string | undefined,
   owner: string,
   repo: string,
-  ref: string
+  ref: string,
+  cardPath: string = ".ishipped/card.md"
 ): string | undefined {
   if (!hero) return undefined;
 
@@ -177,10 +178,18 @@ export function resolveHeroUrl(
     return hero;
   }
 
-  // Resolve relative path to GitHub raw URL
+  // Get the directory containing the card
+  const cardDir = cardPath.includes("/")
+    ? cardPath.substring(0, cardPath.lastIndexOf("/"))
+    : "";
+
   // Remove leading ./ if present
-  const cleanPath = hero.replace(/^\.\//, "");
-  return `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${cleanPath}`;
+  const cleanHero = hero.replace(/^\.\//, "");
+
+  // Resolve relative to card directory
+  const resolvedPath = cardDir ? `${cardDir}/${cleanHero}` : cleanHero;
+
+  return `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${resolvedPath}`;
 }
 
 function validateShippedDate(shipped: unknown): string | undefined {

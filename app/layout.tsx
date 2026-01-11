@@ -5,13 +5,25 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { RouteHandler } from "@/components/RouteHandler";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ishipped.io"),
   title: "iShipped.io - Project Cards for GitHub Repos",
   description:
     "Ship it. Show it. Share it. Beautiful project cards for your GitHub repositories.",
+  icons: {
+    icon: "/favicon.ico",
+  },
   openGraph: {
     title: "iShipped.io",
     description: "Project cards for GitHub repos",
     type: "website",
+    images: [
+      {
+        url: "/ishipped.io.jpg",
+        width: 1200,
+        height: 630,
+        alt: "iShipped.io - Project Cards for GitHub Repos",
+      },
+    ],
   },
 };
 
