@@ -20,10 +20,13 @@ export function URLInput() {
 
     // Parse GitHub URL if provided
     const githubUrlMatch = trimmed.match(
-      /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+)\/([^/]+?)(?:\.git)?(?:\/.*)?$/i
+      /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+)\/([^/]+?)(?:\.git)?(?:\/(?:blob|tree)\/[^/]+\/(.+\.md))?(?:\/.*)?$/i
     );
     if (githubUrlMatch) {
-      trimmed = `${githubUrlMatch[1]}/${githubUrlMatch[2]}`;
+      // Include file path if present (from /blob/branch/path/to/file.md)
+      trimmed = githubUrlMatch[3]
+        ? `${githubUrlMatch[1]}/${githubUrlMatch[2]}/${githubUrlMatch[3]}`
+        : `${githubUrlMatch[1]}/${githubUrlMatch[2]}`;
     } else {
       // Remove leading slash if present
       trimmed = trimmed.replace(/^\//, "");
@@ -44,7 +47,19 @@ export function URLInput() {
       return;
     }
 
-    router.push(`/card/${owner}/${repo}`);
+    // Build the route path - include any additional path segments (for custom .md files)
+    let routePath = `/card/${owner}/${repo}`;
+    if (segments.length > 2) {
+      const filePath = segments.slice(2).join("/");
+      // Validate that file paths end with .md
+      if (!filePath.endsWith(".md")) {
+        setError("Custom file paths must end with .md");
+        return;
+      }
+      routePath += `/${filePath}`;
+    }
+
+    router.push(routePath);
   };
 
   return (
@@ -57,7 +72,7 @@ export function URLInput() {
             setInput(e.target.value);
             setError(null);
           }}
-          placeholder="owner/repo or GitHub URL"
+          placeholder="owner/repo or owner/repo/path/to/file.md"
           className="flex-1 px-4 py-3 rounded-lg border border-border dark:border-border-dark bg-white dark:bg-surface-dark focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent placeholder:text-muted dark:placeholder:text-muted-dark"
           aria-label="GitHub repository path"
         />
