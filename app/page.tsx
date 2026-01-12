@@ -83,6 +83,52 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Agent Instructions */}
+      <section className="py-16 px-4 bg-gray-50 dark:bg-surface-dark">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-2xl font-bold mb-4 text-center">Using a Coding Agent?</h2>
+          <p className="text-center text-muted dark:text-muted-dark mb-6">
+            Give your agent these instructions to create a card for your project:
+          </p>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-border dark:border-border-dark">
+            <pre className="whitespace-pre-wrap text-sm font-mono text-gray-800 dark:text-gray-200 leading-relaxed">{`Create an iShipped.io card for this project at /.ishipped/card.md
+
+Follow this format:
+---
+title: "Project Name"
+summary: "One punchy line. What does it do?"
+hero: "./hero.png"
+shipped: YYYY-MM-DD
+tags: [max, five, tags]
+links:
+  - label: "Try It"
+    url: "https://..."
+    primary: true
+---
+
+## What is it?
+2-3 sentences. No jargon. What problem does it solve?
+
+## Key Features
+- **Bold feature** — Brief explanation
+- Keep it to 3-5 features
+- Lead with the most impressive one
+
+Writing style:
+- Be direct. Cut filler words.
+- Use active voice ("Syncs files" not "Files are synced")
+- Show, don't tell ("Deploys in 30 seconds" beats "Fast deployment")
+- If you can delete a word without losing meaning, delete it
+
+Spec: https://github.com/dandriscoll/ishipped.io/blob/main/SPEC.md
+Example: https://github.com/dandriscoll/ishipped.io/blob/main/.ishipped/card.md`}</pre>
+          </div>
+          <p className="text-center text-sm text-muted dark:text-muted-dark mt-4">
+            Copy these instructions directly into your agent chat.
+          </p>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-border dark:border-border-dark">
         <div className="max-w-3xl mx-auto text-center text-sm text-muted dark:text-muted-dark">
