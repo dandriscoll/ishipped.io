@@ -62,7 +62,7 @@ export function AuthorBlock({
       {/* Expand icon for other cards */}
       {otherCardsCount > 0 && username && (
         <Link
-          href={`/u/${username}`}
+          href={`/u/${username}/`}
           className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted dark:text-muted-dark hover:text-accent hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
           title={`View all cards by @${username}`}
         >

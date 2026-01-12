@@ -178,7 +178,14 @@ export function UserPageClient() {
   const [state, setState] = useState<UserState>({ status: "loading" });
 
   useEffect(() => {
-    const pathname = window.location.pathname;
+    // Check for redirect path from 404.html (for static hosting)
+    let pathname = window.location.pathname;
+    const redirectPath = sessionStorage.getItem('redirectPath');
+    if (redirectPath) {
+      sessionStorage.removeItem('redirectPath');
+      pathname = redirectPath.split('?')[0].split('#')[0];
+    }
+
     const match = pathname.match(/^\/u\/([^/]+)\/?$/);
 
     if (!match) {

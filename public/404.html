@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    // Handle client-side routing for static hosts
+    // Redirect /u/username and /card/owner/repo to their base paths with query params
+    (function() {
+      var path = window.location.pathname;
+      var search = window.location.search;
+      var hash = window.location.hash;
+
+      // Check if this is a /u/ or /card/ route
+      if (path.startsWith('/u/') && path !== '/u/' && path !== '/u/index.html') {
+        // Redirect to /u/ with the path stored for client-side handling
+        sessionStorage.setItem('redirectPath', path + search + hash);
+        window.location.replace('/u/' + search + hash);
+      } else if (path.startsWith('/card/') && path !== '/card/' && path !== '/card/index.html') {
+        // Redirect to /card/ with the path stored for client-side handling
+        sessionStorage.setItem('redirectPath', path + search + hash);
+        window.location.replace('/card/' + search + hash);
+      } else {
+        // Actual 404 - show error or redirect home
+        window.location.replace('/');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>

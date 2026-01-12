@@ -123,8 +123,15 @@ export function CardPageClient() {
   }, []);
 
   useEffect(() => {
-    // Parse path from window.location (e.g., /card/owner/repo or /card/owner/repo/path/to/file.md)
-    const pathname = window.location.pathname;
+    // Check for redirect path from 404.html (for static hosting)
+    let pathname = window.location.pathname;
+    const redirectPath = sessionStorage.getItem('redirectPath');
+    if (redirectPath) {
+      sessionStorage.removeItem('redirectPath');
+      pathname = redirectPath.split('?')[0].split('#')[0];
+    }
+
+    // Parse path from pathname (e.g., /card/owner/repo or /card/owner/repo/path/to/file.md)
     const match = pathname.match(/^\/card\/(.+)$/);
 
     if (!match) {
