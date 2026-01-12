@@ -17,7 +17,7 @@ export function Header() {
             alt="iShipped.io logo"
             width={24}
             height={24}
-            className="rounded"
+            className="rounded dark:p-0.5 dark:bg-white"
           />
           iShipped.io
         </Link>
