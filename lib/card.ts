@@ -1,4 +1,6 @@
 import { parse as parseYaml } from "yaml";
+import type { CardTheme } from "@/components/ThemePicker";
+import { THEMES } from "@/components/ThemePicker";
 
 export interface CardLink {
   label: string;
@@ -37,7 +39,7 @@ export interface CardFrontmatter {
   repo?: CardRepo;
   collaborators?: string[];
   images?: CardImage[];
-  theme?: "default" | "ocean" | "forest" | "sunset" | "lavender" | "midnight" | "ruby";
+  theme?: CardTheme;
 }
 
 export interface ParsedCard {
@@ -293,17 +295,15 @@ function validateImages(images: unknown): CardImage[] {
   return validated;
 }
 
-function validateTheme(theme: unknown): CardFrontmatter["theme"] {
+function validateTheme(theme: unknown): CardTheme | undefined {
   if (typeof theme !== "string") return undefined;
   
-  const validThemes = ["default", "ocean", "forest", "sunset", "lavender", "midnight", "ruby"];
   const trimmed = theme.trim().toLowerCase();
   
-  if (validThemes.includes(trimmed)) {
-    return trimmed as CardFrontmatter["theme"];
-  }
+  // Check if the theme is valid by looking it up in THEMES
+  const validTheme = THEMES.find((t) => t.id === trimmed);
   
-  return undefined;
+  return validTheme ? (trimmed as CardTheme) : undefined;
 }
 
 export function resolveImageUrls(
