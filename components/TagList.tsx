@@ -10,7 +10,7 @@ export function TagList({ tags }: TagListProps) {
       {tags.map((tag) => (
         <span
           key={tag}
-          className="px-3 py-1 text-sm bg-blue-50 dark:bg-blue-900/30 text-accent dark:text-blue-300 rounded-full"
+          className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full"
         >
           {tag}
         </span>
