@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
   --color-accent: #0969da;
   --color-accent-hover: #0860c7;
