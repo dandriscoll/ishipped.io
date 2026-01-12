@@ -17,6 +17,8 @@ interface CardRendererProps {
   cardPath?: string;
   metadata: RepoMetadata;
   theme?: CardTheme;
+  otherCardsCount?: number;
+  authorUsername?: string | null;
 }
 
 export function CardRenderer({
@@ -28,6 +30,8 @@ export function CardRenderer({
   cardPath = ".ishipped/card.md",
   metadata,
   theme = "default",
+  otherCardsCount = 0,
+  authorUsername,
 }: CardRendererProps) {
   const { frontmatter } = card;
   const author =
@@ -137,7 +141,11 @@ export function CardRenderer({
       {/* Author and Metadata */}
       <footer className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <AuthorBlock author={author} />
+          <AuthorBlock
+            author={author}
+            otherCardsCount={otherCardsCount}
+            authorUsername={authorUsername || author.github}
+          />
           {frontmatter.shipped && (
             <div className="text-sm text-muted dark:text-muted-dark">
               Shipped on {formatShippedDate(frontmatter.shipped)}

@@ -9,6 +9,7 @@ import {
   type RepoMetadata,
 } from "@/lib/github";
 import { parseCard, CardParseError, type ParsedCard } from "@/lib/card";
+import { fetchUserCards } from "@/lib/user-api";
 import { renderMarkdown } from "@/lib/markdown";
 import { CardRenderer } from "@/components/CardRenderer";
 import { ThemePicker, type CardTheme } from "@/components/ThemePicker";
@@ -114,6 +115,8 @@ function ErrorDisplay({ code }: { code: string }) {
 export function CardPageClient() {
   const [state, setState] = useState<CardState>({ status: "loading" });
   const [theme, setTheme] = useState<CardTheme>("default");
+  const [otherCardsCount, setOtherCardsCount] = useState<number>(0);
+  const [authorUsername, setAuthorUsername] = useState<string | null>(null);
 
   const handleThemeChange = useCallback((newTheme: CardTheme) => {
     setTheme(newTheme);
@@ -187,6 +190,25 @@ export function CardPageClient() {
 
         // Update document title
         document.title = `${card.frontmatter.title} - iShipped.io`;
+
+        // Fetch author's other cards (non-blocking)
+        const authorGithub =
+          typeof card.frontmatter.author === "object"
+            ? card.frontmatter.author.github || owner
+            : owner;
+        setAuthorUsername(authorGithub);
+
+        try {
+          const userCards = await fetchUserCards(authorGithub);
+          // Count cards excluding the current one
+          const otherCards = userCards.filter(
+            (c) => !(c.owner === owner && c.repo === repo)
+          );
+          setOtherCardsCount(otherCards.length);
+        } catch {
+          // Silently fail - the expand icon just won't show
+          setOtherCardsCount(0);
+        }
       } catch (error) {
         if (error instanceof GitHubURLError) {
           setState({ status: "error", code: error.code });
@@ -226,6 +248,8 @@ export function CardPageClient() {
         cardPath={state.cardPath}
         metadata={state.metadata}
         theme={theme}
+        otherCardsCount={otherCardsCount}
+        authorUsername={authorUsername}
       />
     </div>
   );

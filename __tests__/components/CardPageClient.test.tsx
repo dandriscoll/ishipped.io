@@ -19,8 +19,14 @@ vi.mock("@/lib/markdown", () => ({
   renderMarkdown: vi.fn(),
 }));
 
+// Mock the user-api module
+vi.mock("@/lib/user-api", () => ({
+  fetchUserCards: vi.fn(),
+}));
+
 import * as github from "@/lib/github";
 import * as markdown from "@/lib/markdown";
+import * as userApi from "@/lib/user-api";
 
 describe("CardPageClient", () => {
   const validCardContent = `---
@@ -56,6 +62,9 @@ This is the body content.`;
     vi.mocked(markdown.renderMarkdown).mockResolvedValue(
       "<p>This is the body content.</p>"
     );
+
+    // Default: author has no other cards
+    vi.mocked(userApi.fetchUserCards).mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -407,6 +416,136 @@ Body`);
           "This is the body content."
         );
       });
+    });
+  });
+
+  describe("author's other cards", () => {
+    beforeEach(() => {
+      Object.defineProperty(window, "location", {
+        value: { pathname: "/card/owner/repo" },
+        writable: true,
+      });
+    });
+
+    it("fetches author's other cards after card loads", async () => {
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        expect(userApi.fetchUserCards).toHaveBeenCalledWith("testauthor");
+      });
+    });
+
+    it("uses owner as author when no author.github specified", async () => {
+      const cardWithoutAuthorGithub = `---
+title: Test Project
+---
+Body`;
+
+      vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithoutAuthorGithub);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        expect(userApi.fetchUserCards).toHaveBeenCalledWith("owner");
+      });
+    });
+
+    it("shows expand icon when author has other cards", async () => {
+      const otherCards = [
+        {
+          path: "testauthor/other-repo",
+          owner: "testauthor",
+          repo: "other-repo",
+          card: {
+            frontmatter: { title: "Other Project" },
+            body: "",
+          },
+        },
+        {
+          path: "testauthor/another-repo",
+          owner: "testauthor",
+          repo: "another-repo",
+          card: {
+            frontmatter: { title: "Another Project" },
+            body: "",
+          },
+        },
+      ];
+
+      vi.mocked(userApi.fetchUserCards).mockResolvedValue(otherCards);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        expect(screen.getByText("+2 more")).toBeInTheDocument();
+      });
+    });
+
+    it("excludes current card from other cards count", async () => {
+      const allCards = [
+        {
+          path: "owner/repo", // Current card - should be excluded
+          owner: "owner",
+          repo: "repo",
+          card: {
+            frontmatter: { title: "Current Project" },
+            body: "",
+          },
+        },
+        {
+          path: "owner/other-repo",
+          owner: "owner",
+          repo: "other-repo",
+          card: {
+            frontmatter: { title: "Other Project" },
+            body: "",
+          },
+        },
+      ];
+
+      // Card author defaults to owner when not specified
+      const cardWithOwnerAsAuthor = `---
+title: Test Project
+---
+Body`;
+
+      vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithOwnerAsAuthor);
+      vi.mocked(userApi.fetchUserCards).mockResolvedValue(allCards);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        // Should show +1 more (excluding current card)
+        expect(screen.getByText("+1 more")).toBeInTheDocument();
+      });
+    });
+
+    it("does not show expand icon when author has no other cards", async () => {
+      vi.mocked(userApi.fetchUserCards).mockResolvedValue([]);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Test Author")).toBeInTheDocument();
+      });
+
+      expect(screen.queryByText(/more/)).not.toBeInTheDocument();
+    });
+
+    it("silently handles API errors for other cards", async () => {
+      vi.mocked(userApi.fetchUserCards).mockRejectedValue(
+        new Error("API error")
+      );
+
+      render(<CardPageClient />);
+
+      // Card should still render successfully
+      await waitFor(() => {
+        expect(screen.getByText("Test Project")).toBeInTheDocument();
+      });
+
+      // No error should be shown
+      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
     });
   });
 });

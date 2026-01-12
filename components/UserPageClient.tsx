@@ -7,7 +7,7 @@ import {
   UserApiError,
   type ParsedUserCard,
 } from "@/lib/user-api";
-import { UserCardGrid } from "@/components/UserCardGrid";
+import { Timeline } from "@/components/Timeline";
 
 type UserState =
   | { status: "loading" }
@@ -235,7 +235,7 @@ export function UserPageClient() {
     <div className="min-h-[calc(100vh-3.5rem)] bg-gray-100 dark:bg-bg-dark py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <UserHeader username={state.username} cardCount={state.cards.length} />
-        <UserCardGrid cards={state.cards} />
+        <Timeline cards={state.cards} />
       </div>
     </div>
   );

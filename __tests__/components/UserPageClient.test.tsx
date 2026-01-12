@@ -195,8 +195,9 @@ describe("UserPageClient", () => {
       render(<UserPageClient />);
 
       await waitFor(() => {
-        expect(screen.getByText("Hello World")).toBeInTheDocument();
-        expect(screen.getByText("Awesome App")).toBeInTheDocument();
+        // Timeline renders each card twice (desktop + mobile layouts)
+        expect(screen.getAllByText("Hello World")).toHaveLength(2);
+        expect(screen.getAllByText("Awesome App")).toHaveLength(2);
       });
     });
 
@@ -204,8 +205,9 @@ describe("UserPageClient", () => {
       render(<UserPageClient />);
 
       await waitFor(() => {
-        expect(screen.getByText("My first project")).toBeInTheDocument();
-        expect(screen.getByText("Another great project")).toBeInTheDocument();
+        // Timeline renders each card twice (desktop + mobile layouts)
+        expect(screen.getAllByText("My first project")).toHaveLength(2);
+        expect(screen.getAllByText("Another great project")).toHaveLength(2);
       });
     });
 
