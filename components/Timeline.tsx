@@ -7,6 +7,51 @@ interface TimelineProps {
   cards: ParsedUserCard[];
 }
 
+function TimelineNode({ imageUrl }: { imageUrl?: string }) {
+  if (imageUrl) {
+    return (
+      <div className="w-12 h-12 rounded-full ring-4 ring-accent/20 shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800">
+        <img
+          src={imageUrl}
+          alt=""
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // Replace with accent circle on error
+            const parent = e.currentTarget.parentElement;
+            if (parent) {
+              parent.innerHTML = '';
+              parent.className = "w-12 h-12 rounded-full bg-accent ring-4 ring-accent/20 shrink-0";
+            }
+          }}
+        />
+      </div>
+    );
+  }
+  return <div className="w-12 h-12 rounded-full bg-accent ring-4 ring-accent/20 shrink-0" />;
+}
+
+function TimelineNodeMobile({ imageUrl }: { imageUrl?: string }) {
+  if (imageUrl) {
+    return (
+      <div className="w-8 h-8 rounded-full ring-4 ring-accent/20 shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800">
+        <img
+          src={imageUrl}
+          alt=""
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            const parent = e.currentTarget.parentElement;
+            if (parent) {
+              parent.innerHTML = '';
+              parent.className = "w-8 h-8 rounded-full bg-accent ring-4 ring-accent/20 shrink-0";
+            }
+          }}
+        />
+      </div>
+    );
+  }
+  return <div className="w-8 h-8 rounded-full bg-accent ring-4 ring-accent/20 shrink-0" />;
+}
+
 function TimelineItem({
   card,
   isLeft,
@@ -25,39 +70,27 @@ function TimelineItem({
   const imageUrl = frontmatter.icon || frontmatter.hero;
 
   const cardContent = (
-    <div className="w-full md:w-80 p-4 bg-white dark:bg-surface-dark rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-accent/30 transition-all">
-      <div className="flex items-start gap-3">
-        {imageUrl && (
-          <img
-            src={imageUrl}
-            alt=""
-            className="w-12 h-12 rounded-full object-cover shrink-0 bg-gray-100 dark:bg-gray-800"
-            onError={(e) => {
-              // Hide broken images
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        )}
-        <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-base truncate group-hover:text-accent transition-colors">
-            {frontmatter.title}
-          </h3>
-          {frontmatter.summary && (
-            <p className="text-sm text-muted dark:text-muted-dark line-clamp-2 mt-1">
-              {frontmatter.summary}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
+    <a
+      href={cardUrl}
+      className="block w-full md:w-80 p-4 bg-white dark:bg-surface-dark rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-accent/30 transition-all group"
+    >
+      <h3 className="font-semibold text-base truncate group-hover:text-accent transition-colors">
+        {frontmatter.title}
+      </h3>
+      {frontmatter.summary && (
+        <p className="text-sm text-muted dark:text-muted-dark line-clamp-2 mt-1">
+          {frontmatter.summary}
+        </p>
+      )}
+    </a>
   );
 
   return (
-    <a href={cardUrl} className="group block">
+    <div>
       {/* Desktop layout */}
       <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr] md:gap-4 items-center">
         {/* Left side */}
-        <div className={`flex ${isLeft ? 'justify-end' : 'justify-end'}`}>
+        <div className="flex justify-end">
           {isLeft ? cardContent : (
             <span className="text-sm text-muted dark:text-muted-dark pr-4">
               {frontmatter.shipped && formatShippedDate(frontmatter.shipped)}
@@ -68,15 +101,15 @@ function TimelineItem({
         {/* Center timeline */}
         <div className="flex flex-col items-center">
           {/* Line above */}
-          <div className={`w-0.5 h-8 ${isFirst ? 'bg-transparent' : 'bg-gray-300 dark:bg-gray-600'}`} />
-          {/* Node */}
-          <div className="w-4 h-4 rounded-full bg-accent ring-4 ring-accent/20 shrink-0" />
+          <div className={`w-0.5 h-6 ${isFirst ? 'bg-transparent' : 'bg-gray-300 dark:bg-gray-600'}`} />
+          {/* Node with image */}
+          <TimelineNode imageUrl={imageUrl} />
           {/* Line below */}
-          <div className={`w-0.5 h-8 ${isLast ? 'bg-transparent' : 'bg-gray-300 dark:bg-gray-600'}`} />
+          <div className={`w-0.5 h-6 ${isLast ? 'bg-transparent' : 'bg-gray-300 dark:bg-gray-600'}`} />
         </div>
 
         {/* Right side */}
-        <div className={`flex ${isLeft ? 'justify-start' : 'justify-start'}`}>
+        <div className="flex justify-start">
           {isLeft ? (
             <span className="text-sm text-muted dark:text-muted-dark pl-4">
               {frontmatter.shipped && formatShippedDate(frontmatter.shipped)}
@@ -90,15 +123,15 @@ function TimelineItem({
         {/* Timeline */}
         <div className="flex flex-col items-center">
           {/* Line above */}
-          <div className={`w-0.5 h-4 ${isFirst ? 'bg-transparent' : 'bg-gray-300 dark:bg-gray-600'}`} />
-          {/* Node */}
-          <div className="w-3 h-3 rounded-full bg-accent ring-4 ring-accent/20 shrink-0" />
+          <div className={`w-0.5 h-3 ${isFirst ? 'bg-transparent' : 'bg-gray-300 dark:bg-gray-600'}`} />
+          {/* Node with image */}
+          <TimelineNodeMobile imageUrl={imageUrl} />
           {/* Line below */}
-          <div className="w-0.5 flex-1 bg-gray-300 dark:bg-gray-600" />
+          <div className={`w-0.5 flex-1 ${isLast ? 'bg-transparent' : 'bg-gray-300 dark:bg-gray-600'}`} />
         </div>
 
         {/* Content */}
-        <div className="flex-1 pb-8">
+        <div className="flex-1 pb-6">
           {frontmatter.shipped && (
             <span className="text-xs text-muted dark:text-muted-dark mb-2 block">
               {formatShippedDate(frontmatter.shipped)}
@@ -107,7 +140,7 @@ function TimelineItem({
           {cardContent}
         </div>
       </div>
-    </a>
+    </div>
   );
 }
 
