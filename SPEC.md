@@ -141,8 +141,8 @@ spec: "1"  # Reserved for future use
 |-------------|------------|----------|
 | `title` | Page title, H1 heading | *Required—no fallback* |
 | `summary` | Subtitle below title | Hidden if missing |
-| `hero` | Hero image (max-width: 100%, aspect-ratio preserved) | Hidden if missing |
 | `icon` | Icon in top-right corner (64x64px, rounded) | Hidden if missing |
+| `hero` | Hero image below body content (max-width: 100%, aspect-ratio preserved) | Hidden if missing |
 | `shipped` | "Shipped on [date]" badge | Hidden if missing |
 | `tags` | Horizontal tag pills | Hidden if empty |
 | `author.name` | Author block with name | Repo owner username |
@@ -465,12 +465,6 @@ https://github.com/acme/project/blob/v2.0.0/README.md
 │  [Logo] iShipped.io                    [View on GitHub] │
 ├─────────────────────────────────────────────────────────┤
 │                                                  [ICON] │
-│   ┌─────────────────────────────────────────────────┐   │
-│   │                                                 │   │
-│   │              [HERO IMAGE]                       │   │
-│   │                                                 │   │
-│   └─────────────────────────────────────────────────┘   │
-│                                                         │
 │   CloudSync Pro                              v2.1.0     │
 │   Real-time file synchronization across all devices     │
 │                                                         │
@@ -487,6 +481,12 @@ https://github.com/acme/project/blob/v2.0.0/README.md
 │   ### Key Features                                      │
 │   - **Instant Sync** — Changes propagate...             │
 │   ...                                                   │
+│                                                         │
+│   ┌─────────────────────────────────────────────────┐   │
+│   │                                                 │   │
+│   │              [HERO IMAGE]                       │   │
+│   │                                                 │   │
+│   └─────────────────────────────────────────────────┘   │
 │                                                         │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │

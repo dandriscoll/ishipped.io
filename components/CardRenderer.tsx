@@ -70,25 +70,6 @@ export function CardRenderer({
           </div>
         )}
 
-        {/* Hero Image */}
-      {resolvedHeroUrl && (
-        <div className="mb-8 rounded-lg overflow-hidden">
-          <Image
-            src={resolvedHeroUrl}
-            alt={frontmatter.title}
-            width={800}
-            height={400}
-            className="w-full h-auto object-cover"
-            priority
-          />
-        </div>
-      )}
-
-      {/* Image Gallery */}
-      {resolvedImages.length > 0 && (
-        <ImageGallery images={resolvedImages} />
-      )}
-
       {/* Title and Version */}
       <header className="mb-6">
         <div className="flex items-center gap-3 flex-wrap">
@@ -131,6 +112,26 @@ export function CardRenderer({
           className="card-body"
           dangerouslySetInnerHTML={{ __html: bodyHtml }}
         />
+      )}
+
+      {/* Hero Image */}
+      {resolvedHeroUrl && (
+        <div className="mt-8 rounded-lg overflow-hidden">
+          <Image
+            src={resolvedHeroUrl}
+            alt={frontmatter.title}
+            width={800}
+            height={400}
+            className="w-full h-auto object-cover"
+          />
+        </div>
+      )}
+
+      {/* Image Gallery */}
+      {resolvedImages.length > 0 && (
+        <div className="mt-8">
+          <ImageGallery images={resolvedImages} />
+        </div>
       )}
 
       {/* Author and Metadata */}
