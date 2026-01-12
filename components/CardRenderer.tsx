@@ -59,7 +59,7 @@ export function CardRenderer({
 
         {/* Icon in top-right corner */}
         {resolvedIconUrl && (
-          <div className="absolute top-4 right-4 md:top-6 md:right-6 z-10">
+          <div className="absolute top-4 left-auto right-4 md:top-6 md:right-6 z-10">
             <Image
               src={resolvedIconUrl}
               alt=""
