@@ -75,7 +75,7 @@ export function CardRenderer({
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="text-3xl font-bold">{frontmatter.title}</h1>
           {frontmatter.version && (
-            <span className="px-2 py-0.5 text-sm bg-gray-100 dark:bg-gray-800 text-muted dark:text-muted-dark rounded-md font-mono">
+            <span className="px-2 py-0.5 text-sm bg-gray-100 dark:bg-gray-800 text-muted dark:text-muted-dark rounded-md font-mono border border-transparent">
               {frontmatter.version}
             </span>
           )}
@@ -158,7 +158,7 @@ export function CardRenderer({
                   href={`https://github.com/${collab}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-gray-300 dark:border-gray-700"
                 >
                   <img
                     src={`https://github.com/${collab}.png?size=32`}
@@ -173,7 +173,7 @@ export function CardRenderer({
         )}
 
         {/* Repo Info */}
-        <div className="mt-6 p-4 bg-gray-50 dark:bg-surface-dark rounded-lg">
+        <div className="mt-6 p-4 bg-gray-50 dark:bg-surface-dark rounded-lg border border-transparent">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm">
               <a
