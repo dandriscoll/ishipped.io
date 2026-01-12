@@ -104,6 +104,9 @@ links:
   - label: "Try It"
     url: "https://..."
     primary: true
+images:
+  - url: "./screenshot.png"
+    alt: "Main view"
 ---
 
 ## What is it?

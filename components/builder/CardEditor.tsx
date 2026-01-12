@@ -9,6 +9,7 @@ import {
 import { FieldEditor } from "./FieldEditor";
 import { TagEditor } from "./TagEditor";
 import { LinkEditor } from "./LinkEditor";
+import { ImagesEditor } from "./ImagesEditor";
 import { AuthorEditor } from "./AuthorEditor";
 import { RepoOverrideEditor } from "./RepoOverrideEditor";
 import { CollaboratorsEditor } from "./CollaboratorsEditor";
@@ -18,6 +19,7 @@ type BuilderAction =
   | { type: "SET_FIELD"; field: keyof BuilderState; value: string }
   | { type: "SET_TAGS"; tags: string[] }
   | { type: "SET_LINKS"; links: BuilderState["links"] }
+  | { type: "SET_IMAGES"; images: BuilderState["images"] }
   | { type: "SET_AUTHOR_FIELD"; field: keyof BuilderState["author"]; value: string }
   | { type: "SET_REPO_FIELD"; field: keyof BuilderState["repo"]; value: string }
   | { type: "SET_COLLABORATORS"; collaborators: string[] };
@@ -34,6 +36,17 @@ export function CardEditor({ state, dispatch, errors }: CardEditorProps) {
     const map = new Map<string, string>();
     errors.forEach((e) => {
       if (e.field.startsWith("links[")) {
+        map.set(e.field, e.message);
+      }
+    });
+    return map;
+  }, [errors]);
+
+  // Build a map of image errors for the ImagesEditor
+  const imageErrors = useMemo(() => {
+    const map = new Map<string, string>();
+    errors.forEach((e) => {
+      if (e.field.startsWith("images[")) {
         map.set(e.field, e.message);
       }
     });
@@ -120,6 +133,13 @@ export function CardEditor({ state, dispatch, errors }: CardEditorProps) {
         links={state.links}
         onChange={(links) => dispatch({ type: "SET_LINKS", links })}
         errors={linkErrors}
+      />
+
+      {/* Images */}
+      <ImagesEditor
+        images={state.images}
+        onChange={(images) => dispatch({ type: "SET_IMAGES", images })}
+        errors={imageErrors}
       />
 
       {/* Author */}

@@ -76,6 +76,12 @@ export interface BuilderState {
     name: string;
   };
   collaborators: string[];
+  images: Array<{
+    id: string;
+    url: string;
+    alt: string;
+    caption: string;
+  }>;
   body: string;
   repoOwner: string;
   repoName: string;
@@ -277,6 +283,26 @@ export function validateBuilderState(state: BuilderState): ValidationError[] {
       errors.push({
         field: `collaborators[${i}]`,
         message: `GitHub username too long (max 39 characters)`,
+        severity: "error",
+      });
+    }
+  });
+
+  // Images validation (max 10, valid URLs)
+  const nonEmptyImages = state.images.filter((img) => img.url.trim());
+  if (nonEmptyImages.length > 10) {
+    errors.push({
+      field: "images",
+      message: "Maximum 10 images allowed",
+      severity: "error",
+    });
+  }
+  state.images.forEach((image, i) => {
+    if (image.url.trim() && !isValidImageUrl(image.url)) {
+      errors.push({
+        field: `images[${i}].url`,
+        message:
+          "Image URL must be a relative path or HTTPS URL from allowed domains",
         severity: "error",
       });
     }

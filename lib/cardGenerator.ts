@@ -79,6 +79,21 @@ export function generateCardMarkdown(state: BuilderState): string {
     frontmatter.collaborators = validCollaborators;
   }
 
+  // Images (only ones with URLs)
+  const validImages = state.images
+    .filter((img) => img.url?.trim())
+    .map((img) => {
+      const image: Record<string, string> = {
+        url: img.url.trim(),
+      };
+      if (img.alt?.trim()) image.alt = img.alt.trim();
+      if (img.caption?.trim()) image.caption = img.caption.trim();
+      return image;
+    });
+  if (validImages.length > 0) {
+    frontmatter.images = validImages;
+  }
+
   // Generate YAML with specific options for readability
   const yamlStr = stringify(frontmatter, {
     indent: 2,

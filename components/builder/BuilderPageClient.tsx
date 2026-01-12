@@ -36,6 +36,7 @@ function createInitialState(): BuilderState {
     links: [],
     repo: { owner: "", name: "" },
     collaborators: [],
+    images: [],
     body: "",
     repoOwner: "",
     repoName: "",
@@ -48,6 +49,7 @@ type BuilderAction =
   | { type: "SET_FIELD"; field: keyof BuilderState; value: string }
   | { type: "SET_TAGS"; tags: string[] }
   | { type: "SET_LINKS"; links: BuilderState["links"] }
+  | { type: "SET_IMAGES"; images: BuilderState["images"] }
   | { type: "SET_AUTHOR_FIELD"; field: keyof BuilderState["author"]; value: string }
   | { type: "SET_REPO_FIELD"; field: keyof BuilderState["repo"]; value: string }
   | { type: "SET_COLLABORATORS"; collaborators: string[] }
@@ -66,6 +68,9 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
 
     case "SET_LINKS":
       return { ...state, links: action.links };
+
+    case "SET_IMAGES":
+      return { ...state, images: action.images };
 
     case "SET_AUTHOR_FIELD":
       return {
@@ -117,6 +122,12 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           name: frontmatter.repo?.name || "",
         },
         collaborators: frontmatter.collaborators || [],
+        images: (frontmatter.images || []).map((img, i) => ({
+          id: `image-${i}-${Date.now()}`,
+          url: img.url,
+          alt: img.alt || "",
+          caption: img.caption || "",
+        })),
         body: body || "",
         repoOwner: action.owner,
         repoName: action.repo,
@@ -208,6 +219,13 @@ export function BuilderPageClient() {
             ? { owner: state.repo.owner, name: state.repo.name }
             : undefined,
         collaborators: state.collaborators.filter(Boolean),
+        images: state.images
+          .filter((img) => img.url)
+          .map(({ url, alt, caption }) => ({
+            url,
+            alt: alt || undefined,
+            caption: caption || undefined,
+          })),
       },
       body: state.body,
     };

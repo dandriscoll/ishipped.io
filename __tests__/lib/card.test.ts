@@ -5,6 +5,7 @@ import {
   formatShippedDate,
   formatStars,
   resolveIconUrl,
+  resolveImageUrls,
 } from "@/lib/card";
 
 describe("lib/card", () => {
@@ -367,6 +368,127 @@ title: Test
       const result = parseCard(emptyBody, "owner");
       expect(result.body).toBe("");
     });
+
+    // Images tests
+    it("validates images - accepts valid HTTPS URLs", () => {
+      const validImages = `---
+title: Test
+images:
+  - url: https://raw.githubusercontent.com/user/repo/main/screenshot1.png
+    alt: Screenshot 1
+  - url: https://i.imgur.com/xyz.png
+    alt: Screenshot 2
+    caption: Main dashboard
+---
+Body`;
+
+      const result = parseCard(validImages, "owner");
+      expect(result.frontmatter.images?.length).toBe(2);
+      expect(result.frontmatter.images?.[0].url).toBe(
+        "https://raw.githubusercontent.com/user/repo/main/screenshot1.png"
+      );
+      expect(result.frontmatter.images?.[0].alt).toBe("Screenshot 1");
+      expect(result.frontmatter.images?.[1].caption).toBe("Main dashboard");
+    });
+
+    it("validates images - accepts relative paths", () => {
+      const relativePaths = `---
+title: Test
+images:
+  - url: ./screenshot.png
+  - url: images/demo.png
+---
+Body`;
+
+      const result = parseCard(relativePaths, "owner");
+      expect(result.frontmatter.images?.length).toBe(2);
+      expect(result.frontmatter.images?.[0].url).toBe("./screenshot.png");
+      expect(result.frontmatter.images?.[1].url).toBe("images/demo.png");
+    });
+
+    it("validates images - limits to 10 images", () => {
+      const images = Array(12)
+        .fill(null)
+        .map((_, i) => `  - url: ./image${i}.png`)
+        .join("\n");
+
+      const manyImages = `---
+title: Test
+images:
+${images}
+---
+Body`;
+
+      const result = parseCard(manyImages, "owner");
+      expect(result.frontmatter.images?.length).toBe(10);
+    });
+
+    it("validates images - rejects non-allowed hosts", () => {
+      const badHost = `---
+title: Test
+images:
+  - url: https://evil.com/image.png
+  - url: ./valid.png
+---
+Body`;
+
+      const result = parseCard(badHost, "owner");
+      expect(result.frontmatter.images?.length).toBe(1);
+      expect(result.frontmatter.images?.[0].url).toBe("./valid.png");
+    });
+
+    it("validates images - rejects parent traversal in relative paths", () => {
+      const parentTraversal = `---
+title: Test
+images:
+  - url: ../../../etc/passwd
+  - url: ./valid.png
+---
+Body`;
+
+      const result = parseCard(parentTraversal, "owner");
+      expect(result.frontmatter.images?.length).toBe(1);
+      expect(result.frontmatter.images?.[0].url).toBe("./valid.png");
+    });
+
+    it("validates images - rejects non-HTTPS URLs", () => {
+      const httpImage = `---
+title: Test
+images:
+  - url: http://example.com/image.png
+  - url: ./valid.png
+---
+Body`;
+
+      const result = parseCard(httpImage, "owner");
+      expect(result.frontmatter.images?.length).toBe(1);
+    });
+
+    it("validates images - skips entries without URL", () => {
+      const missingUrl = `---
+title: Test
+images:
+  - alt: No URL here
+  - url: ./valid.png
+    alt: Has URL
+---
+Body`;
+
+      const result = parseCard(missingUrl, "owner");
+      expect(result.frontmatter.images?.length).toBe(1);
+      expect(result.frontmatter.images?.[0].url).toBe("./valid.png");
+    });
+
+    it("validates images - handles empty images array", () => {
+      const emptyImages = `---
+title: Test
+images: []
+---
+Body`;
+
+      const result = parseCard(emptyImages, "owner");
+      expect(result.frontmatter.images?.length).toBe(0);
+    });
   });
 
   describe("formatShippedDate", () => {
@@ -427,6 +549,57 @@ title: Test
     it("resolves relative to custom card path", () => {
       const result = resolveIconUrl("icon.png", "owner", "repo", "main", "docs/card.md");
       expect(result).toBe("https://raw.githubusercontent.com/owner/repo/main/docs/icon.png");
+    });
+  });
+
+  describe("resolveImageUrls", () => {
+    it("returns empty array for undefined input", () => {
+      expect(resolveImageUrls(undefined, "owner", "repo", "main")).toEqual([]);
+    });
+
+    it("returns empty array for empty array input", () => {
+      expect(resolveImageUrls([], "owner", "repo", "main")).toEqual([]);
+    });
+
+    it("returns absolute URLs unchanged", () => {
+      const images = [
+        { url: "https://raw.githubusercontent.com/user/repo/main/img.png", alt: "Test" },
+      ];
+      const result = resolveImageUrls(images, "owner", "repo", "main");
+      expect(result[0].url).toBe("https://raw.githubusercontent.com/user/repo/main/img.png");
+      expect(result[0].alt).toBe("Test");
+    });
+
+    it("resolves relative paths to raw.githubusercontent.com", () => {
+      const images = [
+        { url: "./screenshot.png", alt: "Screenshot" },
+        { url: "images/demo.png" },
+      ];
+      const result = resolveImageUrls(images, "owner", "repo", "main");
+      expect(result[0].url).toBe(
+        "https://raw.githubusercontent.com/owner/repo/main/.ishipped/screenshot.png"
+      );
+      expect(result[1].url).toBe(
+        "https://raw.githubusercontent.com/owner/repo/main/.ishipped/images/demo.png"
+      );
+    });
+
+    it("resolves relative to custom card path", () => {
+      const images = [{ url: "demo.png", caption: "Demo" }];
+      const result = resolveImageUrls(images, "owner", "repo", "main", "docs/card.md");
+      expect(result[0].url).toBe(
+        "https://raw.githubusercontent.com/owner/repo/main/docs/demo.png"
+      );
+      expect(result[0].caption).toBe("Demo");
+    });
+
+    it("preserves alt and caption fields", () => {
+      const images = [
+        { url: "./img.png", alt: "Alt text", caption: "Caption text" },
+      ];
+      const result = resolveImageUrls(images, "owner", "repo", "main");
+      expect(result[0].alt).toBe("Alt text");
+      expect(result[0].caption).toBe("Caption text");
     });
   });
 });

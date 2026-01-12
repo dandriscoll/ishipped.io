@@ -37,6 +37,7 @@
 | `version` | string | `null` | Version identifier (semver preferred) |
 | `repo` | Repo object | hosting repo | Source repository override (see below) |
 | `collaborators` | string[] | `[]` | GitHub usernames of contributors (max 20) |
+| `images` | Image[] | `[]` | Screenshot gallery (max 10, see below) |
 
 #### Author Object
 
@@ -89,6 +90,31 @@ collaborators:
 - Each username must be a valid GitHub username (alphanumeric, hyphens, max 39 chars)
 - The `@` prefix is optional and will be stripped if present
 
+#### Images Array
+
+Display screenshots or other images in a gallery format. Images can be clicked to view full-size in a lightbox.
+
+```yaml
+images:
+  - url: "./screenshot1.png"       # Required: relative path or HTTPS URL
+    alt: "Dashboard view"          # Optional: accessibility text
+    caption: "The main dashboard"  # Optional: displayed below image
+  - url: "./screenshot2.png"
+    alt: "Settings panel"
+  - url: "https://i.imgur.com/example.png"
+```
+
+**Display behavior:**
+- Single image: displayed larger (max-width: 100%, max-height: 400px)
+- Multiple images: displayed in a horizontal row (thumbnails ~200px wide)
+- Click any image to open full-size in a lightbox with navigation
+
+**Constraints:**
+- Maximum 10 images
+- Each URL must be a relative path or HTTPS URL from allowed hosts
+- Relative paths resolved from card directory (same as hero/icon)
+- Alt text recommended for accessibility
+
 #### Validation Rules
 
 1. **Strings:** Trimmed, reject if only whitespace
@@ -126,6 +152,7 @@ spec: "1"  # Reserved for future use
 | `version` | Version badge next to title | Hidden if missing |
 | `repo` | Repository link in footer | Hosting repository |
 | `collaborators` | Avatar list with GitHub links | Hidden if empty |
+| `images` | Screenshot gallery with lightbox | Hidden if empty |
 
 #### Markdown Body Rendering
 
@@ -165,6 +192,7 @@ The content after frontmatter is rendered as Markdown with these rules:
 | Invalid `icon` URL | Hide icon, no error |
 | Invalid `author.github` | Fall back to repo owner |
 | Malformed `links` entry | Skip that entry |
+| Malformed `images` entry | Skip that entry |
 | Empty body | Render card with frontmatter only |
 
 ---
@@ -221,6 +249,14 @@ collaborators:
   - "mikejohnson"
   - "emilywang"
   - "alexkim"
+images:
+  - url: "./dashboard.png"
+    alt: "CloudSync dashboard"
+    caption: "Main dashboard view"
+  - url: "./sync-settings.png"
+    alt: "Sync settings panel"
+  - url: "./mobile-app.png"
+    alt: "Mobile app screenshot"
 ---
 
 ## What is CloudSync Pro?
@@ -984,6 +1020,9 @@ links:
 collaborators:
   - "teammate1"
   - "teammate2"
+images:
+  - url: "./screenshot.png"
+    alt: "App screenshot"
 ---
 
 ## About

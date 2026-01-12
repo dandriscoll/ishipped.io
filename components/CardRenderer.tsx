@@ -1,10 +1,11 @@
 import Image from "next/image";
 import type { ParsedCard } from "@/lib/card";
 import type { RepoMetadata } from "@/lib/github";
-import { formatShippedDate, formatStars, resolveHeroUrl, resolveIconUrl } from "@/lib/card";
+import { formatShippedDate, formatStars, resolveHeroUrl, resolveIconUrl, resolveImageUrls } from "@/lib/card";
 import { AuthorBlock } from "./AuthorBlock";
 import { TagList } from "./TagList";
 import { LinkButtons } from "./LinkButtons";
+import { ImageGallery } from "./ImageGallery";
 import type { CardTheme } from "./ThemePicker";
 
 interface CardRendererProps {
@@ -42,6 +43,7 @@ export function CardRenderer({
   // Resolve relative hero/icon URLs to absolute GitHub raw URLs (relative to card location)
   const resolvedHeroUrl = resolveHeroUrl(frontmatter.hero, owner, repo, ref, cardPath);
   const resolvedIconUrl = resolveIconUrl(frontmatter.icon, owner, repo, ref, cardPath);
+  const resolvedImages = resolveImageUrls(frontmatter.images, owner, repo, ref, cardPath);
 
   return (
     <div
@@ -80,6 +82,11 @@ export function CardRenderer({
             priority
           />
         </div>
+      )}
+
+      {/* Image Gallery */}
+      {resolvedImages.length > 0 && (
+        <ImageGallery images={resolvedImages} />
       )}
 
       {/* Title and Version */}

@@ -18,6 +18,12 @@ export interface CardRepo {
   name: string;
 }
 
+export interface CardImage {
+  url: string;
+  alt?: string;
+  caption?: string;
+}
+
 export interface CardFrontmatter {
   title: string;
   summary?: string;
@@ -30,6 +36,7 @@ export interface CardFrontmatter {
   links?: CardLink[];
   repo?: CardRepo;
   collaborators?: string[];
+  images?: CardImage[];
 }
 
 export interface ParsedCard {
@@ -255,6 +262,51 @@ function validateCollaborators(collaborators: unknown): string[] {
     .slice(0, 20); // Max 20 collaborators
 }
 
+function validateImages(images: unknown): CardImage[] {
+  if (!Array.isArray(images)) return [];
+
+  const validated: CardImage[] = [];
+
+  for (const image of images.slice(0, 10)) {
+    if (typeof image !== "object" || image === null) continue;
+
+    const obj = image as Record<string, unknown>;
+    const url = typeof obj.url === "string" ? obj.url.trim() : "";
+
+    if (!url) continue;
+
+    // Validate URL using same rules as hero/icon
+    const validatedUrl = validateHeroUrl(url);
+    if (!validatedUrl) continue;
+
+    const alt = typeof obj.alt === "string" ? obj.alt.trim() : undefined;
+    const caption = typeof obj.caption === "string" ? obj.caption.trim() : undefined;
+
+    validated.push({
+      url: validatedUrl,
+      alt: alt || undefined,
+      caption: caption || undefined,
+    });
+  }
+
+  return validated;
+}
+
+export function resolveImageUrls(
+  images: CardImage[] | undefined,
+  owner: string,
+  repo: string,
+  ref: string,
+  cardPath: string = ".ishipped/card.md"
+): CardImage[] {
+  if (!images || images.length === 0) return [];
+
+  return images.map((image) => ({
+    ...image,
+    url: resolveRelativeImageUrl(image.url, owner, repo, ref, cardPath) || image.url,
+  }));
+}
+
 export function parseCard(content: string, repoOwner: string): ParsedCard {
   // Extract frontmatter between --- delimiters
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
@@ -313,6 +365,7 @@ export function parseCard(content: string, repoOwner: string): ParsedCard {
     links: validateLinks(frontmatterRaw.links),
     repo: validateRepo(frontmatterRaw.repo),
     collaborators: validateCollaborators(frontmatterRaw.collaborators),
+    images: validateImages(frontmatterRaw.images),
   };
 
   return {
