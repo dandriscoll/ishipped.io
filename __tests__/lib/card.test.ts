@@ -602,4 +602,69 @@ Body`;
       expect(result[0].caption).toBe("Caption text");
     });
   });
+
+  describe("theme field", () => {
+    it("parses theme field from frontmatter", () => {
+      const content = `---
+title: "Test Card"
+theme: ruby
+---
+
+Test body`;
+
+      const parsed = parseCard(content, "owner");
+      expect(parsed.frontmatter.theme).toBe("ruby");
+    });
+
+    it("handles cards without theme field", () => {
+      const content = `---
+title: "Test Card"
+---
+
+Test body`;
+
+      const parsed = parseCard(content, "owner");
+      expect(parsed.frontmatter.theme).toBeUndefined();
+    });
+
+    it("ignores invalid theme values", () => {
+      const content = `---
+title: "Test Card"
+theme: invalid-theme
+---
+
+Test body`;
+
+      const parsed = parseCard(content, "owner");
+      expect(parsed.frontmatter.theme).toBeUndefined();
+    });
+
+    it("handles all valid themes", () => {
+      const themes = ["default", "ocean", "forest", "sunset", "lavender", "midnight", "ruby"];
+      
+      themes.forEach((theme) => {
+        const content = `---
+title: "Test Card"
+theme: ${theme}
+---
+
+Test body`;
+
+        const parsed = parseCard(content, "owner");
+        expect(parsed.frontmatter.theme).toBe(theme);
+      });
+    });
+
+    it("handles case insensitive theme values", () => {
+      const content = `---
+title: "Test Card"
+theme: RUBY
+---
+
+Test body`;
+
+      const parsed = parseCard(content, "owner");
+      expect(parsed.frontmatter.theme).toBe("ruby");
+    });
+  });
 });

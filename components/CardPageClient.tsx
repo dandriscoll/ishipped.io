@@ -195,6 +195,11 @@ export function CardPageClient() {
           metadata,
         });
 
+        // Set the theme from the card's frontmatter
+        if (card.frontmatter.theme) {
+          setTheme(card.frontmatter.theme);
+        }
+
         // Update document title
         document.title = `${card.frontmatter.title} - iShipped.io`;
 
