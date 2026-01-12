@@ -9,7 +9,9 @@
     "lint": "next lint",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "a11y": "playwright test tests/a11y.spec.ts",
+    "a11y:ci": "CI=true playwright test tests/a11y.spec.ts"
   },
   "repository": {
     "type": "git",
@@ -39,6 +41,8 @@
     "yaml": "^2.8.2"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@playwright/test": "^1.49.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/jest-dom": "^6.9.1",

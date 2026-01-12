@@ -24,6 +24,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (stored) {
       setThemeState(stored);
     }
+    // Set app-ready marker for accessibility testing (Playwright/axe-core)
+    // This indicates the SPA has hydrated and is ready for interaction
+    document.body.setAttribute("data-app-ready", "true");
   }, []);
 
   useEffect(() => {
