@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/ishipped.io.jpg",
+        url: "/ishipped.io.png",
         width: 1200,
         height: 630,
         alt: "iShipped.io - Project Cards for GitHub Repos",

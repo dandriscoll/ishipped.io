@@ -9,11 +9,11 @@ export default function HomePage() {
       <section className="py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <Image
-            src="/ishipped.io.jpg"
+            src="/ishipped.io.png"
             alt="iShipped.io"
             width={128}
             height={128}
-            className="mx-auto mb-8 rounded-2xl shadow-lg"
+            className="mx-auto mb-8 p-4 rounded-2xl shadow-lg"
           />
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             Ship it. Show it. Share it.

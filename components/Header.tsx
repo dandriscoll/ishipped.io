@@ -13,10 +13,10 @@ export function Header() {
           className="flex items-center gap-2 font-semibold text-lg hover:text-accent transition-colors"
         >
           <Image
-            src="/ishipped.io.jpg"
+            src="/ishipped.io.png"
             alt="iShipped.io logo"
-            width={40}
-            height={40}
+            width={24}
+            height={24}
             className="rounded"
           />
           iShipped.io
