@@ -13,10 +13,22 @@ function isValidHttpsUrl(str: string): boolean {
   }
 }
 
-function isValidHeroUrl(hero: string): boolean {
-  if (!isValidHttpsUrl(hero)) return false;
+function isRelativePath(path: string): boolean {
+  return !path.startsWith("http://") && !path.startsWith("https://") && !path.startsWith("data:");
+}
+
+function isValidImageUrl(url: string): boolean {
+  // Allow relative paths
+  if (isRelativePath(url)) {
+    // Basic validation for relative paths
+    if (url.includes("..")) return false; // No parent directory traversal
+    return true;
+  }
+
+  // For absolute URLs, require HTTPS and allowed hosts
+  if (!isValidHttpsUrl(url)) return false;
   try {
-    const url = new URL(hero);
+    const parsedUrl = new URL(url);
     const allowedHosts = [
       "raw.githubusercontent.com",
       "user-images.githubusercontent.com",
@@ -24,7 +36,7 @@ function isValidHeroUrl(hero: string): boolean {
       "i.imgur.com",
     ];
     return allowedHosts.some(
-      (h) => url.hostname === h || url.hostname.endsWith(`.${h}`)
+      (h) => parsedUrl.hostname === h || parsedUrl.hostname.endsWith(`.${h}`)
     );
   } catch {
     return false;
@@ -43,6 +55,7 @@ export interface BuilderState {
   title: string;
   summary: string;
   hero: string;
+  icon: string;
   shipped: string;
   version: string;
   tags: string[];
@@ -97,12 +110,22 @@ export function validateBuilderState(state: BuilderState): ValidationError[] {
     });
   }
 
-  // Hero URL validation (HTTPS, allowed domains)
-  if (state.hero.trim() && !isValidHeroUrl(state.hero)) {
+  // Hero URL validation (relative path or HTTPS from allowed domains)
+  if (state.hero.trim() && !isValidImageUrl(state.hero)) {
     errors.push({
       field: "hero",
       message:
-        "Hero must be HTTPS URL from allowed domains (raw.githubusercontent.com, i.imgur.com, etc.)",
+        "Hero must be a relative path or HTTPS URL from allowed domains (raw.githubusercontent.com, i.imgur.com, etc.)",
+      severity: "error",
+    });
+  }
+
+  // Icon URL validation (relative path or HTTPS from allowed domains)
+  if (state.icon.trim() && !isValidImageUrl(state.icon)) {
+    errors.push({
+      field: "icon",
+      message:
+        "Icon must be a relative path or HTTPS URL from allowed domains (raw.githubusercontent.com, i.imgur.com, etc.)",
       severity: "error",
     });
   }

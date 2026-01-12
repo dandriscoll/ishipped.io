@@ -70,13 +70,22 @@ export function CardEditor({ state, dispatch, errors }: CardEditorProps) {
 
       {/* Hero Image */}
       <FieldEditor
-        label="Hero Image URL"
+        label="Hero Image"
         value={state.hero}
         onChange={(value) => dispatch({ type: "SET_FIELD", field: "hero", value })}
         error={getFieldError(errors, "hero")}
-        placeholder="https://raw.githubusercontent.com/..."
-        type="url"
-        hint="Allowed hosts: raw.githubusercontent.com, i.imgur.com"
+        placeholder="./hero.png or https://raw.githubusercontent.com/..."
+        hint="Relative path or HTTPS URL (raw.githubusercontent.com, i.imgur.com)"
+      />
+
+      {/* Icon */}
+      <FieldEditor
+        label="Icon"
+        value={state.icon}
+        onChange={(value) => dispatch({ type: "SET_FIELD", field: "icon", value })}
+        error={getFieldError(errors, "icon")}
+        placeholder="./icon.png or https://raw.githubusercontent.com/..."
+        hint="Appears in top-right corner. Relative path or HTTPS URL"
       />
 
       {/* Version and Shipped Date */}

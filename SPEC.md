@@ -29,6 +29,7 @@
 |-------|------|---------|-------------|
 | `summary` | string | `null` | One-line description (max 280 chars) |
 | `hero` | URL or path | `null` | Hero image URL (HTTPS) or relative path (e.g., `hero.png`) |
+| `icon` | URL or path | `null` | Icon image displayed in top-right corner (HTTPS URL or relative path) |
 | `shipped` | ISO 8601 date | `null` | Ship date (e.g., `2024-03-15`) |
 | `tags` | string[] | `[]` | Categorical tags (max 10, each max 30 chars) |
 | `author` | Author object or string | repo owner | Project author (see below) |
@@ -115,6 +116,7 @@ spec: "1"  # Reserved for future use
 | `title` | Page title, H1 heading | *Required—no fallback* |
 | `summary` | Subtitle below title | Hidden if missing |
 | `hero` | Hero image (max-width: 100%, aspect-ratio preserved) | Hidden if missing |
+| `icon` | Icon in top-right corner (64x64px, rounded) | Hidden if missing |
 | `shipped` | "Shipped on [date]" badge | Hidden if missing |
 | `tags` | Horizontal tag pills | Hidden if empty |
 | `author.name` | Author block with name | Repo owner username |
@@ -160,6 +162,7 @@ The content after frontmatter is rendered as Markdown with these rules:
 | No frontmatter | Error: "Invalid card format" |
 | No `title` | Error: "Card must have a title" |
 | Invalid `hero` URL | Hide hero, no error |
+| Invalid `icon` URL | Hide icon, no error |
 | Invalid `author.github` | Fall back to repo owner |
 | Malformed `links` entry | Skip that entry |
 | Empty body | Render card with frontmatter only |
@@ -191,6 +194,7 @@ Renders as:
 title: "CloudSync Pro"
 summary: "Real-time file synchronization across all your devices"
 hero: "https://raw.githubusercontent.com/acme/cloudsync/main/.ishipped/hero.png"
+icon: "./icon.png"
 shipped: 2024-03-15
 version: "2.1.0"
 tags:
@@ -297,11 +301,14 @@ For a card at `.ishipped/card.md`:
 hero: "hero.png"              # Resolves to .ishipped/hero.png
 hero: "./hero.png"            # Resolves to .ishipped/hero.png
 hero: "assets/banner.jpg"     # Resolves to .ishipped/assets/banner.jpg
+icon: "icon.png"              # Resolves to .ishipped/icon.png
+icon: "./icon.png"            # Resolves to .ishipped/icon.png
 ```
 
 For a card at `docs/showcase.md`:
 ```yaml
 hero: "images/hero.png"       # Resolves to docs/images/hero.png
+icon: "images/icon.png"       # Resolves to docs/images/icon.png
 ```
 
 **Blocked:**
@@ -421,7 +428,7 @@ https://github.com/acme/project/blob/v2.0.0/README.md
 ┌─────────────────────────────────────────────────────────┐
 │  [Logo] iShipped.io                    [View on GitHub] │
 ├─────────────────────────────────────────────────────────┤
-│                                                         │
+│                                                  [ICON] │
 │   ┌─────────────────────────────────────────────────┐   │
 │   │                                                 │   │
 │   │              [HERO IMAGE]                       │   │
@@ -966,6 +973,8 @@ Description goes here.
 ---
 title: "Project Name"
 summary: "One-line description of what it does"
+hero: "./hero.png"
+icon: "./icon.png"
 shipped: 2024-01-15
 tags: [tag1, tag2]
 links:

@@ -22,6 +22,7 @@ export interface CardFrontmatter {
   title: string;
   summary?: string;
   hero?: string;
+  icon?: string;
   shipped?: string;
   version?: string;
   tags?: string[];
@@ -164,18 +165,18 @@ function validateHeroUrl(hero: unknown): string | undefined {
   }
 }
 
-export function resolveHeroUrl(
-  hero: string | undefined,
+function resolveRelativeImageUrl(
+  imagePath: string | undefined,
   owner: string,
   repo: string,
   ref: string,
   cardPath: string = ".ishipped/card.md"
 ): string | undefined {
-  if (!hero) return undefined;
+  if (!imagePath) return undefined;
 
   // If it's already an absolute URL, return as-is
-  if (!isRelativePath(hero)) {
-    return hero;
+  if (!isRelativePath(imagePath)) {
+    return imagePath;
   }
 
   // Get the directory containing the card
@@ -184,12 +185,32 @@ export function resolveHeroUrl(
     : "";
 
   // Remove leading ./ if present
-  const cleanHero = hero.replace(/^\.\//, "");
+  const cleanPath = imagePath.replace(/^\.\//, "");
 
   // Resolve relative to card directory
-  const resolvedPath = cardDir ? `${cardDir}/${cleanHero}` : cleanHero;
+  const resolvedPath = cardDir ? `${cardDir}/${cleanPath}` : cleanPath;
 
   return `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${resolvedPath}`;
+}
+
+export function resolveHeroUrl(
+  hero: string | undefined,
+  owner: string,
+  repo: string,
+  ref: string,
+  cardPath: string = ".ishipped/card.md"
+): string | undefined {
+  return resolveRelativeImageUrl(hero, owner, repo, ref, cardPath);
+}
+
+export function resolveIconUrl(
+  icon: string | undefined,
+  owner: string,
+  repo: string,
+  ref: string,
+  cardPath: string = ".ishipped/card.md"
+): string | undefined {
+  return resolveRelativeImageUrl(icon, owner, repo, ref, cardPath);
 }
 
 function validateShippedDate(shipped: unknown): string | undefined {
@@ -281,6 +302,7 @@ export function parseCard(content: string, repoOwner: string): ParsedCard {
     title,
     summary: summary || undefined,
     hero: validateHeroUrl(frontmatterRaw.hero),
+    icon: validateHeroUrl(frontmatterRaw.icon),
     shipped: validateShippedDate(frontmatterRaw.shipped),
     version:
       typeof frontmatterRaw.version === "string"

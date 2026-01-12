@@ -15,6 +15,9 @@ export function generateCardMarkdown(state: BuilderState): string {
   if (state.hero?.trim()) {
     frontmatter.hero = state.hero.trim();
   }
+  if (state.icon?.trim()) {
+    frontmatter.icon = state.icon.trim();
+  }
   if (state.shipped?.trim()) {
     frontmatter.shipped = state.shipped.trim();
   }

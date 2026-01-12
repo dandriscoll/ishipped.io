@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { ParsedCard } from "@/lib/card";
 import type { RepoMetadata } from "@/lib/github";
-import { formatShippedDate, formatStars, resolveHeroUrl } from "@/lib/card";
+import { formatShippedDate, formatStars, resolveHeroUrl, resolveIconUrl } from "@/lib/card";
 import { AuthorBlock } from "./AuthorBlock";
 import { TagList } from "./TagList";
 import { LinkButtons } from "./LinkButtons";
@@ -39,8 +39,9 @@ export function CardRenderer({
   const displayRepoName = frontmatter.repo?.name || repo;
   const collaborators = frontmatter.collaborators || [];
 
-  // Resolve relative hero URL to absolute GitHub raw URL (relative to card location)
+  // Resolve relative hero/icon URLs to absolute GitHub raw URLs (relative to card location)
   const resolvedHeroUrl = resolveHeroUrl(frontmatter.hero, owner, repo, ref, cardPath);
+  const resolvedIconUrl = resolveIconUrl(frontmatter.icon, owner, repo, ref, cardPath);
 
   return (
     <div
@@ -48,12 +49,26 @@ export function CardRenderer({
       data-card-theme={theme !== "default" ? theme : undefined}
     >
       <article
-        className="max-w-3xl mx-auto floating-card themed-card p-6 md:p-8"
+        className="max-w-3xl mx-auto floating-card themed-card p-6 md:p-8 relative"
         data-card-theme={theme !== "default" ? theme : undefined}
       >
         {/* Theme-specific decorative overlay */}
         {theme !== "default" && <div className="theme-overlay" aria-hidden="true" />}
-      {/* Hero Image */}
+
+        {/* Icon in top-right corner */}
+        {resolvedIconUrl && (
+          <div className="absolute top-4 right-4 md:top-6 md:right-6 z-10">
+            <Image
+              src={resolvedIconUrl}
+              alt=""
+              width={64}
+              height={64}
+              className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover shadow-md"
+            />
+          </div>
+        )}
+
+        {/* Hero Image */}
       {resolvedHeroUrl && (
         <div className="mb-8 rounded-lg overflow-hidden">
           <Image

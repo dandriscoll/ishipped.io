@@ -4,6 +4,7 @@ import {
   CardParseError,
   formatShippedDate,
   formatStars,
+  resolveIconUrl,
 } from "@/lib/card";
 
 describe("lib/card", () => {
@@ -133,6 +134,63 @@ Body`;
 
       const result = parseCard(badHost, "owner");
       expect(result.frontmatter.hero).toBeUndefined();
+    });
+
+    it("validates hero URL - accepts relative paths", () => {
+      const relativePath = `---
+title: Test
+hero: ./hero.png
+---
+Body`;
+
+      const result = parseCard(relativePath, "owner");
+      expect(result.frontmatter.hero).toBe("./hero.png");
+    });
+
+    it("validates hero URL - rejects relative paths with parent traversal", () => {
+      const parentTraversal = `---
+title: Test
+hero: ../../../etc/passwd
+---
+Body`;
+
+      const result = parseCard(parentTraversal, "owner");
+      expect(result.frontmatter.hero).toBeUndefined();
+    });
+
+    it("validates icon URL - accepts allowed hosts", () => {
+      const validIcon = `---
+title: Test
+icon: https://raw.githubusercontent.com/user/repo/main/icon.png
+---
+Body`;
+
+      const result = parseCard(validIcon, "owner");
+      expect(result.frontmatter.icon).toBe(
+        "https://raw.githubusercontent.com/user/repo/main/icon.png"
+      );
+    });
+
+    it("validates icon URL - accepts relative paths", () => {
+      const relativePath = `---
+title: Test
+icon: ./icon.png
+---
+Body`;
+
+      const result = parseCard(relativePath, "owner");
+      expect(result.frontmatter.icon).toBe("./icon.png");
+    });
+
+    it("validates icon URL - rejects non-allowed hosts", () => {
+      const badHost = `---
+title: Test
+icon: https://evil.com/icon.png
+---
+Body`;
+
+      const result = parseCard(badHost, "owner");
+      expect(result.frontmatter.icon).toBeUndefined();
     });
 
     it("validates shipped date - accepts YYYY-MM-DD", () => {
@@ -343,6 +401,32 @@ title: Test
       expect(formatStars(1000)).toBe("1.0k");
       expect(formatStars(1500)).toBe("1.5k");
       expect(formatStars(15000)).toBe("15.0k");
+    });
+  });
+
+  describe("resolveIconUrl", () => {
+    it("returns undefined for undefined input", () => {
+      expect(resolveIconUrl(undefined, "owner", "repo", "main")).toBeUndefined();
+    });
+
+    it("returns absolute URLs unchanged", () => {
+      const url = "https://raw.githubusercontent.com/user/repo/main/icon.png";
+      expect(resolveIconUrl(url, "owner", "repo", "main")).toBe(url);
+    });
+
+    it("resolves relative paths to raw.githubusercontent.com", () => {
+      const result = resolveIconUrl("icon.png", "owner", "repo", "main");
+      expect(result).toBe("https://raw.githubusercontent.com/owner/repo/main/.ishipped/icon.png");
+    });
+
+    it("resolves relative paths with ./ prefix", () => {
+      const result = resolveIconUrl("./icon.png", "owner", "repo", "main");
+      expect(result).toBe("https://raw.githubusercontent.com/owner/repo/main/.ishipped/icon.png");
+    });
+
+    it("resolves relative to custom card path", () => {
+      const result = resolveIconUrl("icon.png", "owner", "repo", "main", "docs/card.md");
+      expect(result).toBe("https://raw.githubusercontent.com/owner/repo/main/docs/icon.png");
     });
   });
 });
