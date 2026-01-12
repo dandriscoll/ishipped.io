@@ -17,24 +17,23 @@ export type CardTheme = (typeof THEMES)[number]["id"];
 interface ThemePickerProps {
   onThemeChange?: (theme: CardTheme) => void;
   dropUp?: boolean;
-  storageKey?: string;
 }
 
-export function ThemePicker({ onThemeChange, dropUp = false, storageKey = "card-theme" }: ThemePickerProps) {
+export function ThemePicker({ onThemeChange, dropUp = false }: ThemePickerProps) {
   const [selectedTheme, setSelectedTheme] = useState<CardTheme>("default");
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey) as CardTheme | null;
+    const saved = localStorage.getItem("card-theme") as CardTheme | null;
     if (saved && THEMES.some((t) => t.id === saved)) {
       setSelectedTheme(saved);
       onThemeChange?.(saved);
     }
-  }, [onThemeChange, storageKey]);
+  }, [onThemeChange]);
 
   const handleThemeSelect = (themeId: CardTheme) => {
     setSelectedTheme(themeId);
-    localStorage.setItem(storageKey, themeId);
+    localStorage.setItem("card-theme", themeId);
     onThemeChange?.(themeId);
     setIsOpen(false);
   };

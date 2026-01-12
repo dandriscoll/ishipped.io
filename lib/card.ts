@@ -37,6 +37,7 @@ export interface CardFrontmatter {
   repo?: CardRepo;
   collaborators?: string[];
   images?: CardImage[];
+  theme?: "default" | "ocean" | "forest" | "sunset" | "lavender" | "midnight" | "ruby";
 }
 
 export interface ParsedCard {
@@ -292,6 +293,19 @@ function validateImages(images: unknown): CardImage[] {
   return validated;
 }
 
+function validateTheme(theme: unknown): CardFrontmatter["theme"] {
+  if (typeof theme !== "string") return undefined;
+  
+  const validThemes = ["default", "ocean", "forest", "sunset", "lavender", "midnight", "ruby"];
+  const trimmed = theme.trim().toLowerCase();
+  
+  if (validThemes.includes(trimmed)) {
+    return trimmed as CardFrontmatter["theme"];
+  }
+  
+  return undefined;
+}
+
 export function resolveImageUrls(
   images: CardImage[] | undefined,
   owner: string,
@@ -366,6 +380,7 @@ export function parseCard(content: string, repoOwner: string): ParsedCard {
     repo: validateRepo(frontmatterRaw.repo),
     collaborators: validateCollaborators(frontmatterRaw.collaborators),
     images: validateImages(frontmatterRaw.images),
+    theme: validateTheme(frontmatterRaw.theme),
   };
 
   return {

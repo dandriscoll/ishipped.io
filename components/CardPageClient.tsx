@@ -195,6 +195,11 @@ export function CardPageClient() {
           metadata,
         });
 
+        // Set the theme from the card's frontmatter
+        if (card.frontmatter.theme) {
+          setTheme(card.frontmatter.theme);
+        }
+
         // Update document title
         document.title = `${card.frontmatter.title} - iShipped.io`;
 
@@ -239,14 +244,11 @@ export function CardPageClient() {
     return <ErrorDisplay code={state.code} />;
   }
 
-  // Create a card-specific storage key for theme persistence
-  const themeStorageKey = `card-theme-${state.owner}/${state.repo}`;
-
   return (
     <div className="relative">
       {/* Theme Picker - fixed position */}
       <div className="fixed bottom-4 right-4 z-50">
-        <ThemePicker onThemeChange={handleThemeChange} dropUp storageKey={themeStorageKey} />
+        <ThemePicker onThemeChange={handleThemeChange} dropUp />
       </div>
 
       <CardRenderer
