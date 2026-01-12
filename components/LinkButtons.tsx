@@ -15,7 +15,7 @@ export function LinkButtons({ links }: LinkButtonsProps) {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className={`inline-flex items-center px-4 py-2 rounded-md font-medium transition-all ${
+          className={`inline-flex items-center px-4 py-2 rounded-md font-medium transition-colors ${
             link.primary
               ? "bg-accent hover:bg-accent-hover text-white border border-transparent"
               : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700"
