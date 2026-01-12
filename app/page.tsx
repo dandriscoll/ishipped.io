@@ -38,7 +38,7 @@ export default function HomePage() {
               </div>
               <h3 className="font-semibold mb-2">Add a card</h3>
               <p className="text-sm text-muted dark:text-muted-dark">
-                Create <code className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm">/.ishipped/card.md</code> in your repo
+                Create <code className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm text-gray-600 dark:text-gray-300">/.ishipped/card.md</code> in your repo
               </p>
             </div>
             <div className="text-center">
@@ -96,7 +96,7 @@ export default function HomePage() {
               href="https://github.com/dandriscoll/ishipped.io"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent hover:underline"
+              className="text-accent underline"
             >
               View on GitHub
             </a>
