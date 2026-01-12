@@ -1,4 +1,4 @@
-import { parseCard, type ParsedCard } from "./card";
+import { parseCard, resolveIconUrl, resolveHeroUrl, type ParsedCard } from "./card";
 
 export interface UserCard {
   path: string;
@@ -73,6 +73,30 @@ export async function fetchUserCards(
 
     try {
       const parsed = parseCard(card.content, owner);
+
+      // Resolve relative image URLs (default to main branch)
+      const ref = "main";
+      const cardPath = ".ishipped/card.md";
+
+      if (parsed.frontmatter.icon) {
+        parsed.frontmatter.icon = resolveIconUrl(
+          parsed.frontmatter.icon,
+          owner,
+          repo,
+          ref,
+          cardPath
+        );
+      }
+      if (parsed.frontmatter.hero) {
+        parsed.frontmatter.hero = resolveHeroUrl(
+          parsed.frontmatter.hero,
+          owner,
+          repo,
+          ref,
+          cardPath
+        );
+      }
+
       parsedCards.push({
         path: card.path,
         owner,
