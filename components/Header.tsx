@@ -15,8 +15,8 @@ export function Header() {
           <Image
             src="/ishipped.io.jpg"
             alt="iShipped.io logo"
-            width={32}
-            height={32}
+            width={40}
+            height={40}
             className="rounded"
           />
           iShipped.io
