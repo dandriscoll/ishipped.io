@@ -128,7 +128,12 @@ export function CardPageClient() {
     const redirectPath = sessionStorage.getItem('redirectPath');
     if (redirectPath) {
       sessionStorage.removeItem('redirectPath');
-      pathname = redirectPath.split('?')[0].split('#')[0];
+      // Validate redirectPath to prevent path injection
+      const cleanPath = redirectPath.split('?')[0].split('#')[0];
+      // Only accept paths that start with /card/ to prevent open redirect
+      if (/^\/card\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+/.test(cleanPath)) {
+        pathname = cleanPath;
+      }
     }
 
     // Parse path from pathname (e.g., /card/owner/repo or /card/owner/repo/path/to/file.md)

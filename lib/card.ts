@@ -142,6 +142,24 @@ function isRelativePath(path: string): boolean {
   return !path.startsWith("http://") && !path.startsWith("https://") && !path.startsWith("data:");
 }
 
+function isValidRelativePath(path: string): boolean {
+  // Reject path traversal attempts
+  if (path.includes("..")) return false;
+  // Reject absolute paths
+  if (path.startsWith("/")) return false;
+  // Reject protocol-relative URLs
+  if (path.startsWith("//")) return false;
+  // Reject backslash paths (Windows-style traversal)
+  if (path.includes("\\")) return false;
+  // Reject URL-encoded traversal attempts (%2e = ., %2f = /)
+  if (/%2e|%2f|%5c/i.test(path)) return false;
+  // Reject null bytes and other suspicious characters
+  if (/[\x00-\x1f]/.test(path)) return false;
+  // Only allow alphanumeric, dash, underscore, dot, and forward slash
+  if (!/^[a-zA-Z0-9_.\-/]+$/.test(path)) return false;
+  return true;
+}
+
 function validateHeroUrl(hero: unknown): string | undefined {
   if (typeof hero !== "string") return undefined;
 
@@ -150,8 +168,8 @@ function validateHeroUrl(hero: unknown): string | undefined {
 
   // Allow relative paths (will be resolved later with repo context)
   if (isRelativePath(trimmed)) {
-    // Basic validation for relative paths
-    if (trimmed.includes("..")) return undefined; // No parent directory traversal
+    // Robust validation for relative paths
+    if (!isValidRelativePath(trimmed)) return undefined;
     return trimmed;
   }
 

@@ -16,10 +16,13 @@ function TimelineNode({ imageUrl }: { imageUrl?: string }) {
           alt=""
           className="w-full h-full object-cover"
           onError={(e) => {
-            // Replace with accent circle on error
+            // Replace with accent circle on error using safe DOM methods
             const parent = e.currentTarget.parentElement;
             if (parent) {
-              parent.innerHTML = '';
+              // Clear children safely without innerHTML
+              while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+              }
               parent.className = "w-12 h-12 rounded-full bg-accent ring-4 ring-accent/20 shrink-0";
             }
           }}
@@ -39,9 +42,13 @@ function TimelineNodeMobile({ imageUrl }: { imageUrl?: string }) {
           alt=""
           className="w-full h-full object-cover"
           onError={(e) => {
+            // Replace with accent circle on error using safe DOM methods
             const parent = e.currentTarget.parentElement;
             if (parent) {
-              parent.innerHTML = '';
+              // Clear children safely without innerHTML
+              while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+              }
               parent.className = "w-8 h-8 rounded-full bg-accent ring-4 ring-accent/20 shrink-0";
             }
           }}

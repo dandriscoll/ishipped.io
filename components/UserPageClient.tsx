@@ -183,7 +183,12 @@ export function UserPageClient() {
     const redirectPath = sessionStorage.getItem('redirectPath');
     if (redirectPath) {
       sessionStorage.removeItem('redirectPath');
-      pathname = redirectPath.split('?')[0].split('#')[0];
+      // Validate redirectPath to prevent path injection
+      const cleanPath = redirectPath.split('?')[0].split('#')[0];
+      // Only accept paths that start with /u/ followed by valid username
+      if (/^\/u\/[a-zA-Z0-9_-]+\/?$/.test(cleanPath)) {
+        pathname = cleanPath;
+      }
     }
 
     const match = pathname.match(/^\/u\/([^/]+)\/?$/);
