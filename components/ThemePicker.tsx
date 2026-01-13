@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const THEMES = [
   { id: "default", name: "Default", color: "#0969da" },
@@ -15,24 +15,18 @@ const THEMES = [
 export type CardTheme = (typeof THEMES)[number]["id"];
 
 interface ThemePickerProps {
+  value?: CardTheme;
   onThemeChange?: (theme: CardTheme) => void;
   dropUp?: boolean;
 }
 
-export function ThemePicker({ onThemeChange, dropUp = false }: ThemePickerProps) {
-  const [selectedTheme, setSelectedTheme] = useState<CardTheme>("default");
+export function ThemePicker({ value = "default", onThemeChange, dropUp = false }: ThemePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("card-theme") as CardTheme | null;
-    if (saved && THEMES.some((t) => t.id === saved)) {
-      setSelectedTheme(saved);
-      onThemeChange?.(saved);
-    }
-  }, [onThemeChange]);
+  // Use the controlled value from parent
+  const selectedTheme = value;
 
   const handleThemeSelect = (themeId: CardTheme) => {
-    setSelectedTheme(themeId);
     localStorage.setItem("card-theme", themeId);
     onThemeChange?.(themeId);
     setIsOpen(false);

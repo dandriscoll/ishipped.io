@@ -548,4 +548,173 @@ Body`;
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
     });
   });
+
+  describe("theme loading", () => {
+    let localStorageMock: { [key: string]: string };
+
+    beforeEach(() => {
+      Object.defineProperty(window, "location", {
+        value: { pathname: "/card/owner/repo" },
+        writable: true,
+      });
+
+      // Mock localStorage for consistent behavior in tests
+      localStorageMock = {};
+      const localStorageImpl = {
+        getItem: (key: string) => localStorageMock[key] ?? null,
+        setItem: (key: string, value: string) => { localStorageMock[key] = value; },
+        removeItem: (key: string) => { delete localStorageMock[key]; },
+        clear: () => { localStorageMock = {}; },
+        get length() { return Object.keys(localStorageMock).length; },
+        key: (index: number) => Object.keys(localStorageMock)[index] ?? null,
+      };
+      Object.defineProperty(window, "localStorage", { value: localStorageImpl, writable: true });
+    });
+
+    it("applies theme from card frontmatter", async () => {
+      const cardWithTheme = `---
+title: Test Project
+theme: ruby
+---
+Body content`;
+
+      vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithTheme);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        // Check that the theme data attribute is set on the card
+        const themedElement = document.querySelector('[data-card-theme="ruby"]');
+        expect(themedElement).toBeTruthy();
+      });
+    });
+
+    it("applies default theme when card explicitly specifies default", async () => {
+      // Set localStorage to a different theme to verify it gets overridden
+      localStorage.setItem("card-theme", "ocean");
+
+      const cardWithDefaultTheme = `---
+title: Test Project
+theme: default
+---
+Body content`;
+
+      vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithDefaultTheme);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Test Project")).toBeInTheDocument();
+      });
+
+      // Default theme should NOT have data-card-theme attribute (or should be undefined)
+      // The CardRenderer only sets data-card-theme for non-default themes
+      const themedElement = document.querySelector('[data-card-theme="ocean"]');
+      expect(themedElement).toBeFalsy();
+    });
+
+    it("falls back to localStorage theme when card has no theme", async () => {
+      // Set localStorage BEFORE render
+      localStorage.setItem("card-theme", "forest");
+
+      const cardWithoutTheme = `---
+title: Unique Card For Theme Test
+---
+Body content`;
+
+      vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithoutTheme);
+
+      const { container } = render(<CardPageClient />);
+
+      // Wait for the card to load
+      await waitFor(() => {
+        expect(screen.getByText("Unique Card For Theme Test")).toBeInTheDocument();
+      });
+
+      // Verify the theme from localStorage is applied
+      await waitFor(() => {
+        const themedElement = container.querySelector('[data-card-theme="forest"]');
+        expect(themedElement).toBeTruthy();
+      }, { timeout: 2000 });
+    });
+
+    it("uses default theme when card has no theme and localStorage is empty", async () => {
+      const cardWithoutTheme = `---
+title: Test Project
+---
+Body content`;
+
+      vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithoutTheme);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Test Project")).toBeInTheDocument();
+      });
+
+      // No theme attribute should be set for default
+      const themedElements = document.querySelectorAll('[data-card-theme]');
+      expect(themedElements.length).toBe(0);
+    });
+
+    it("ignores invalid localStorage theme and uses default", async () => {
+      localStorage.setItem("card-theme", "invalid-theme");
+
+      const cardWithoutTheme = `---
+title: Test Project
+---
+Body content`;
+
+      vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithoutTheme);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Test Project")).toBeInTheDocument();
+      });
+
+      // No theme attribute should be set (default theme)
+      const themedElements = document.querySelectorAll('[data-card-theme]');
+      expect(themedElements.length).toBe(0);
+    });
+
+    it("card theme takes priority over localStorage theme", async () => {
+      localStorage.setItem("card-theme", "ocean");
+
+      const cardWithTheme = `---
+title: Test Project
+theme: sunset
+---
+Body content`;
+
+      vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithTheme);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        const sunsetTheme = document.querySelector('[data-card-theme="sunset"]');
+        expect(sunsetTheme).toBeTruthy();
+
+        const oceanTheme = document.querySelector('[data-card-theme="ocean"]');
+        expect(oceanTheme).toBeFalsy();
+      });
+    });
+
+    it("ThemePicker displays the current theme from card", async () => {
+      const cardWithTheme = `---
+title: Test Project
+theme: lavender
+---
+Body content`;
+
+      vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithTheme);
+
+      render(<CardPageClient />);
+
+      await waitFor(() => {
+        // Check that ThemePicker shows the correct theme name
+        expect(screen.getByText("Lavender")).toBeInTheDocument();
+      });
+    });
+  });
 });

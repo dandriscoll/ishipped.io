@@ -12,7 +12,7 @@ import { parseCard, CardParseError, type ParsedCard } from "@/lib/card";
 import { fetchUserCards } from "@/lib/user-api";
 import { renderMarkdown } from "@/lib/markdown";
 import { CardRenderer } from "@/components/CardRenderer";
-import { ThemePicker, type CardTheme } from "@/components/ThemePicker";
+import { ThemePicker, THEMES, type CardTheme } from "@/components/ThemePicker";
 
 type CardState =
   | { status: "loading" }
@@ -200,9 +200,17 @@ export function CardPageClient() {
           metadata,
         });
 
-        // Set the theme from the card's frontmatter
-        if (card.frontmatter.theme) {
+        // Set the theme from the card's frontmatter, or fall back to localStorage
+        if (card.frontmatter.theme !== undefined) {
+          // Card explicitly specifies a theme (including "default")
           setTheme(card.frontmatter.theme);
+        } else {
+          // No theme in frontmatter, check localStorage for user preference
+          const savedTheme = localStorage.getItem("card-theme");
+          if (savedTheme && THEMES.some((t) => t.id === savedTheme)) {
+            setTheme(savedTheme as CardTheme);
+          }
+          // Otherwise keep the default theme
         }
 
         // Update document title
@@ -253,7 +261,7 @@ export function CardPageClient() {
     <div className="relative">
       {/* Theme Picker - fixed position */}
       <div className="fixed bottom-4 right-4 z-50">
-        <ThemePicker onThemeChange={handleThemeChange} dropUp />
+        <ThemePicker value={theme} onThemeChange={handleThemeChange} dropUp />
       </div>
 
       <CardRenderer

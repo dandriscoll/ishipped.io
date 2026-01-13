@@ -218,9 +218,12 @@ describe("UserPageClient", () => {
           (link) =>
             link.getAttribute("href")?.startsWith("/card/") ?? false
         );
-        expect(cardLinks).toHaveLength(2);
-        expect(cardLinks[0]).toHaveAttribute("href", "/card/octocat/hello-world");
-        expect(cardLinks[1]).toHaveAttribute("href", "/card/octocat/awesome-app");
+        // Timeline view renders both mobile and desktop versions of each card
+        // So we check for unique hrefs instead of counting total links
+        const uniqueHrefs = [...new Set(cardLinks.map((link) => link.getAttribute("href")))];
+        expect(uniqueHrefs).toHaveLength(2);
+        expect(uniqueHrefs).toContain("/card/octocat/hello-world");
+        expect(uniqueHrefs).toContain("/card/octocat/awesome-app");
       });
     });
 
