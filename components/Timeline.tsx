@@ -71,7 +71,7 @@ function TimelineItem({
   isLast: boolean;
 }) {
   const { frontmatter } = card.card;
-  const cardUrl = `/card/${card.owner}/${card.repo}`;
+  const cardUrl = `/card/${card.path}`;
 
   // Prefer icon, fallback to hero
   const imageUrl = frontmatter.icon || frontmatter.hero;

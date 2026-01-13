@@ -85,6 +85,33 @@ describe("Timeline", () => {
       expect(cardLinks).toContain("/card/octocat/awesome-app");
       expect(cardLinks).toContain("/card/octocat/old-project");
     });
+
+    it("renders correct links for cards with custom paths", () => {
+      const cardsWithCustomPath: ParsedUserCard[] = [
+        {
+          path: "octocat/my-repo/docs/shipped.md",
+          owner: "octocat",
+          repo: "my-repo",
+          card: {
+            frontmatter: {
+              title: "Custom Path Card",
+              summary: "A card at a custom path",
+              shipped: "2024-03-01",
+            },
+            body: "",
+          },
+        },
+      ];
+
+      render(<Timeline cards={cardsWithCustomPath} />);
+
+      const links = screen.getAllByRole("link");
+      const cardLinks = links.map((link) => link.getAttribute("href"));
+
+      // Should use the full path, not just owner/repo
+      expect(cardLinks).toContain("/card/octocat/my-repo/docs/shipped.md");
+      expect(cardLinks).not.toContain("/card/octocat/my-repo");
+    });
   });
 
   describe("sorting", () => {
