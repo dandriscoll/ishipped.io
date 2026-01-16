@@ -75,7 +75,7 @@ export function CardRenderer({
         )}
 
       {/* Title and Version */}
-      <header className="mb-6">
+      <header className={`mb-6 ${resolvedIconUrl ? "pr-16 md:pr-24" : ""}`}>
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="text-3xl font-bold">{frontmatter.title}</h1>
           {frontmatter.version && (
