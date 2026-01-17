@@ -182,6 +182,42 @@ The content after frontmatter is rendered as Markdown with these rules:
 - Max height with scroll for blocks > 30 lines
 - Copy button on hover
 
+#### viewAt Section
+
+The `viewAt` section is a special markdown section that provides a clickable link to view the card on ishipped.io. This link is visible when viewing the raw markdown file (e.g., on GitHub or in an editor) but is automatically stripped when rendering the card in the viewer.
+
+**Format:**
+```markdown
+---
+[View on ishipped.io](https://ishipped.io/card/owner/repo)
+```
+
+**Placement:** Always at the very end of the card file, after all other content.
+
+**Purpose:**
+- Allows users browsing GitHub to quickly jump to the rendered card
+- Provides a permanent link to the card viewer
+- Does not clutter the rendered card display
+
+**Example:**
+```markdown
+---
+title: "My Project"
+---
+
+## About
+My project description...
+
+---
+[View on ishipped.io](https://ishipped.io/card/acme/myproject)
+```
+
+**Rules:**
+- Must be preceded by a horizontal rule (`---`, `***`, or `___`)
+- Must contain a markdown link to `https://ishipped.io/card/...`
+- Automatically stripped from rendered output
+- Optional but recommended for discoverability
+
 #### Graceful Degradation
 
 | Missing Data | Behavior |
@@ -1033,6 +1069,9 @@ Longer description...
 
 - Feature 1
 - Feature 2
+
+---
+[View on ishipped.io](https://ishipped.io/card/owner/repo)
 ```
 
 ### URL Quick Reference

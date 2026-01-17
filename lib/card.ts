@@ -339,6 +339,30 @@ export function resolveImageUrls(
   }));
 }
 
+/**
+ * Strip the viewAt section from the card body.
+ * The viewAt section is a special markdown section at the end of the card
+ * that contains a link to view the card on ishipped.io. It's meant to be
+ * visible when viewing the raw markdown file (e.g., on GitHub) but should
+ * not be rendered in the card viewer.
+ *
+ * Format: A horizontal rule followed by a link containing "ishipped.io"
+ * Example:
+ *   ---
+ *   [View on ishipped.io](https://ishipped.io/card/owner/repo)
+ */
+function stripViewAtSection(body: string): string {
+  // Match a trailing horizontal rule followed by a line containing an ishipped.io link
+  // The pattern matches:
+  // - Optional whitespace/newlines
+  // - A horizontal rule (---, ***, or ___ with optional spaces)
+  // - Optional whitespace/newlines
+  // - A line containing a markdown link to ishipped.io
+  // - Optional trailing whitespace
+  const viewAtPattern = /\n*[-*_]{3,}\s*\n+.*\[.*\]\(https:\/\/ishipped\.io\/card\/[^)]+\).*\s*$/;
+  return body.replace(viewAtPattern, "").trim();
+}
+
 export function parseCard(content: string, repoOwner: string): ParsedCard {
   // Extract frontmatter between --- delimiters
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
@@ -401,9 +425,13 @@ export function parseCard(content: string, repoOwner: string): ParsedCard {
     theme: validateTheme(frontmatterRaw.theme),
   };
 
+  // Strip the viewAt section before returning the body
+  const rawBody = match[2].trim();
+  const body = stripViewAtSection(rawBody);
+
   return {
     frontmatter,
-    body: match[2].trim(),
+    body,
   };
 }
 

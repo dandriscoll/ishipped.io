@@ -31,6 +31,11 @@ links:
 - Keep it to 3-5 features
 - Lead with the most impressive one
 
+---
+[View on ishipped.io](https://ishipped.io/card/OWNER/REPO)
+
+IMPORTANT: Always end the card with the viewAt section above (replace OWNER/REPO with actual values). This creates a clickable link when viewing the file on GitHub.
+
 Writing style:
 - Be direct. Cut filler words.
 - Use active voice ("Syncs files" not "Files are synced")

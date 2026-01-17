@@ -56,3 +56,6 @@ Your markdown content here.
 ---
 
 Built with Next.js.
+
+---
+[View on ishipped.io](https://ishipped.io/card/dandriscoll/ishipped.io)

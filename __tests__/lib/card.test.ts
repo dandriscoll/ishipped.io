@@ -667,4 +667,93 @@ Test body`;
       expect(parsed.frontmatter.theme).toBe("ruby");
     });
   });
+
+  describe("viewAt section stripping", () => {
+    it("strips viewAt section from body", () => {
+      const content = `---
+title: "Test Card"
+---
+
+This is the body.
+
+---
+[View on ishipped.io](https://ishipped.io/card/owner/repo)`;
+
+      const parsed = parseCard(content, "owner");
+      expect(parsed.body).toBe("This is the body.");
+    });
+
+    it("strips viewAt section with different markdown horizontal rules", () => {
+      const content = `---
+title: "Test Card"
+---
+
+Body content here.
+
+***
+[View on ishipped.io](https://ishipped.io/card/owner/repo)`;
+
+      const parsed = parseCard(content, "owner");
+      expect(parsed.body).toBe("Body content here.");
+    });
+
+    it("preserves body when no viewAt section present", () => {
+      const content = `---
+title: "Test Card"
+---
+
+Just regular body content.`;
+
+      const parsed = parseCard(content, "owner");
+      expect(parsed.body).toBe("Just regular body content.");
+    });
+
+    it("only strips viewAt from end of body, not middle", () => {
+      const content = `---
+title: "Test Card"
+---
+
+Before content.
+
+---
+[View on ishipped.io](https://ishipped.io/card/owner/repo)
+
+After content.`;
+
+      const parsed = parseCard(content, "owner");
+      // Should keep the viewAt link since it's not at the end
+      expect(parsed.body).toContain("ishipped.io");
+      expect(parsed.body).toContain("After content.");
+    });
+
+    it("handles viewAt with extra whitespace", () => {
+      const content = `---
+title: "Test Card"
+---
+
+Body content.
+
+---
+[View on ishipped.io](https://ishipped.io/card/acme/myproject)
+
+`;
+
+      const parsed = parseCard(content, "owner");
+      expect(parsed.body).toBe("Body content.");
+    });
+
+    it("handles different owner/repo in viewAt link", () => {
+      const content = `---
+title: "Test Card"
+---
+
+Content here.
+
+---
+[View on ishipped.io](https://ishipped.io/card/different-owner/some-repo)`;
+
+      const parsed = parseCard(content, "owner");
+      expect(parsed.body).toBe("Content here.");
+    });
+  });
 });
