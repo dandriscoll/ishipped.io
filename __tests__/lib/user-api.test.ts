@@ -108,6 +108,41 @@ describe("lib/user-api", () => {
       expect(cards[1].card.frontmatter.title).toBe("Awesome Project");
     });
 
+    it("constructs full path for non-card.md files", async () => {
+      const mockResponse = {
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            username: "octocat",
+            cards: [
+              {
+                path: "octocat/hello-world",
+                file: "card.md",
+                content: "---\ntitle: Default Card\n---\n\nBody.",
+              },
+              {
+                path: "octocat/awesome-project",
+                file: "feature.md",
+                content: "---\ntitle: Feature Card\n---\n\nBody.",
+              },
+            ],
+            cached_at: "2024-01-01T00:00:00Z",
+          }),
+      };
+      vi.spyOn(global, "fetch").mockResolvedValueOnce(
+        mockResponse as unknown as Response
+      );
+
+      const cards = await fetchUserCards("octocat");
+
+      expect(cards).toHaveLength(2);
+      // card.md should use the simple path (owner/repo)
+      expect(cards[0].path).toBe("octocat/hello-world");
+      // non-card.md should include the full file path
+      expect(cards[1].path).toBe("octocat/awesome-project/.ishipped/feature.md");
+    });
+
     it("skips cards that fail to parse", async () => {
       const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 

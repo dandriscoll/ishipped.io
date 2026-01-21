@@ -2,6 +2,7 @@ import { parseCard, resolveIconUrl, resolveHeroUrl, type ParsedCard } from "./ca
 
 export interface UserCard {
   path: string;
+  file?: string;
   content: string;
 }
 
@@ -76,7 +77,9 @@ export async function fetchUserCards(
 
       // Resolve relative image URLs (default to main branch)
       const ref = "main";
-      const cardPath = ".ishipped/card.md";
+      // Use the actual file path from the API, defaulting to card.md
+      const fileName = card.file || "card.md";
+      const cardPath = `.ishipped/${fileName}`;
 
       if (parsed.frontmatter.icon) {
         parsed.frontmatter.icon = resolveIconUrl(
@@ -97,8 +100,15 @@ export async function fetchUserCards(
         );
       }
 
+      // Construct the full path for the card URL
+      // If file is not "card.md", include the file path so the URL becomes
+      // /card/owner/repo/.ishipped/foo.md instead of /card/owner/repo
+      const fullPath = fileName === "card.md"
+        ? card.path
+        : `${card.path}/${cardPath}`;
+
       parsedCards.push({
-        path: card.path,
+        path: fullPath,
         owner,
         repo,
         card: parsed,
