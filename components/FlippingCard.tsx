@@ -89,7 +89,7 @@ export function FlippingCard() {
               <div className="text-xs uppercase tracking-wider text-muted dark:text-muted-dark mb-3 font-semibold">
                 /.ishipped/card.md
               </div>
-              <pre className="text-sm font-mono overflow-auto h-[calc(100%-2rem)] text-left">
+              <pre className="text-sm font-mono overflow-auto h-[calc(100%-2rem)] text-left" tabIndex={0}>
                 <code className="text-gray-700 dark:text-gray-300">{EXAMPLE_MARKDOWN}</code>
               </pre>
             </div>
@@ -101,7 +101,7 @@ export function FlippingCard() {
               <div className="text-xs uppercase tracking-wider text-muted dark:text-muted-dark mb-3 font-semibold">
                 Rendered Card
               </div>
-              <div className="text-left h-[calc(100%-2rem)] overflow-auto">
+              <div className="text-left h-[calc(100%-2rem)] overflow-auto" tabIndex={0}>
                 {/* Simulated rendered card preview */}
                 <div className="space-y-4">
                   <div>
