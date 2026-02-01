@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducer, useMemo, useState, useEffect, useCallback } from "react";
-import { ThemePicker, type CardTheme } from "@/components/ThemePicker";
+import type { CardTheme } from "@/components/ThemePicker";
 import { CardRenderer } from "@/components/CardRenderer";
 import { renderMarkdown } from "@/lib/markdown";
 import { parseCard, type ParsedCard } from "@/lib/card";
@@ -304,10 +304,7 @@ export function BuilderPageClient() {
               loading={state.loadingState === "loading"}
               error={state.loadError}
             />
-            <div className="flex items-center gap-3">
-              <ThemePicker value={state.theme as CardTheme} onThemeChange={(t) => dispatch({ type: "SET_FIELD", field: "theme", value: t })} />
-              <CopyButton content={cardOutput} disabled={hasValidationErrors} />
-            </div>
+            <CopyButton content={cardOutput} disabled={hasValidationErrors} />
           </div>
         </div>
       </div>

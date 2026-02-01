@@ -14,6 +14,7 @@ import { AuthorEditor } from "./AuthorEditor";
 import { RepoOverrideEditor } from "./RepoOverrideEditor";
 import { CollaboratorsEditor } from "./CollaboratorsEditor";
 import { MarkdownEditor } from "./MarkdownEditor";
+import { ThemePicker, type CardTheme } from "@/components/ThemePicker";
 
 type BuilderAction =
   | { type: "SET_FIELD"; field: keyof BuilderState; value: string }
@@ -118,6 +119,17 @@ export function CardEditor({ state, dispatch, errors }: CardEditorProps) {
           error={getFieldError(errors, "shipped")}
           placeholder="2024-01-15"
           hint="Format: YYYY-MM-DD"
+        />
+      </div>
+
+      {/* Theme */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Theme
+        </label>
+        <ThemePicker
+          value={state.theme as CardTheme}
+          onThemeChange={(t) => dispatch({ type: "SET_FIELD", field: "theme", value: t })}
         />
       </div>
 
