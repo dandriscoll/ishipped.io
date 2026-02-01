@@ -3,6 +3,7 @@ title: "iShipped.io"
 summary: "Ship it. Show it. Share it. Project cards for GitHub repos."
 shipped: 2026-01-07
 version: "1.0.0"
+theme: default
 icon: ishipped.io.png
 tags:
   - nextjs
