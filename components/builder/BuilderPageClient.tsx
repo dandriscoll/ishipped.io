@@ -31,6 +31,7 @@ function createInitialState(): BuilderState {
     icon: "",
     shipped: "",
     version: "",
+    theme: "default",
     tags: [],
     author: { name: "", github: "", url: "", avatar: "" },
     links: [],
@@ -104,6 +105,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         icon: frontmatter.icon || "",
         shipped: frontmatter.shipped || "",
         version: frontmatter.version || "",
+        theme: frontmatter.theme || "default",
         tags: frontmatter.tags || [],
         author: {
           name: author.name || "",
@@ -141,6 +143,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         ...state,
         title: action.repo,
         summary: action.metadata.description || "",
+        theme: "default",
         repoOwner: action.owner,
         repoName: action.repo,
         loadingState: "loaded",
@@ -164,7 +167,6 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
 
 export function BuilderPageClient() {
   const [state, dispatch] = useReducer(builderReducer, null, createInitialState);
-  const [theme, setTheme] = useState<CardTheme>("default");
   const [bodyHtml, setBodyHtml] = useState("");
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
@@ -278,6 +280,18 @@ export function BuilderPageClient() {
     []
   );
 
+  // Auto-load from URL params (e.g., /builder?repo=owner/repo)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const repoParam = params.get("repo");
+    if (repoParam) {
+      const parts = repoParam.split("/");
+      if (parts.length === 2 && parts[0] && parts[1]) {
+        handleLoadRepo(parts[0], parts[1]);
+      }
+    }
+  }, [handleLoadRepo]);
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-bg-dark">
       {/* Top bar */}
@@ -290,7 +304,7 @@ export function BuilderPageClient() {
               error={state.loadError}
             />
             <div className="flex items-center gap-3">
-              <ThemePicker onThemeChange={setTheme} />
+              <ThemePicker value={state.theme as CardTheme} onThemeChange={(t) => dispatch({ type: "SET_FIELD", field: "theme", value: t })} />
               <CopyButton content={cardOutput} disabled={hasValidationErrors} />
             </div>
           </div>
@@ -331,7 +345,7 @@ export function BuilderPageClient() {
                   repo={state.repoName || "repo"}
                   ref="main"
                   metadata={previewMetadata}
-                  theme={theme}
+                  theme={state.theme as CardTheme}
                 />
               </div>
             </div>

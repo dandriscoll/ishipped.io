@@ -38,6 +38,7 @@
 | `repo` | Repo object | hosting repo | Source repository override (see below) |
 | `collaborators` | string[] | `[]` | GitHub usernames of contributors (max 20) |
 | `images` | Image[] | `[]` | Screenshot gallery (max 10, see below) |
+| `theme` | string | `null` | Card color theme (see below) |
 
 #### Author Object
 
@@ -115,6 +116,18 @@ images:
 - Relative paths resolved from card directory (same as hero/icon)
 - Alt text recommended for accessibility
 
+#### Theme
+
+Set a color theme for the card. Must be one of the named themes; invalid values are ignored and the default theme is used.
+
+```yaml
+theme: "ocean"
+```
+
+**Available themes:** `default`, `ocean`, `forest`, `sunset`, `lavender`, `midnight`, `ruby`
+
+When a card specifies a theme, it overrides the viewer's locally-selected theme. When omitted, the viewer's preference (or `default`) is used.
+
 #### Validation Rules
 
 1. **Strings:** Trimmed, reject if only whitespace
@@ -153,6 +166,7 @@ spec: "1"  # Reserved for future use
 | `repo` | Repository link in footer | Hosting repository |
 | `collaborators` | Avatar list with GitHub links | Hidden if empty |
 | `images` | Screenshot gallery with lightbox | Hidden if empty |
+| `theme` | Card color scheme | Viewer preference or `default` |
 
 #### Markdown Body Rendering
 
@@ -229,6 +243,7 @@ My project description...
 | Invalid `author.github` | Fall back to repo owner |
 | Malformed `links` entry | Skip that entry |
 | Malformed `images` entry | Skip that entry |
+| Invalid `theme` value | Fall back to default theme |
 | Empty body | Render card with frontmatter only |
 
 ---
@@ -261,6 +276,7 @@ hero: "https://raw.githubusercontent.com/acme/cloudsync/main/.ishipped/hero.png"
 icon: "./icon.png"
 shipped: 2024-03-15
 version: "2.1.0"
+theme: "ocean"
 tags:
   - sync
   - cloud

@@ -1,5 +1,6 @@
 import { stringify } from "yaml";
 import type { BuilderState } from "./builderValidation";
+import { THEMES } from "@/components/ThemePicker";
 
 export function generateCardMarkdown(state: BuilderState): string {
   // Build frontmatter object, only including non-empty fields
@@ -23,6 +24,9 @@ export function generateCardMarkdown(state: BuilderState): string {
   }
   if (state.version?.trim()) {
     frontmatter.version = state.version.trim();
+  }
+  if (state.theme && state.theme !== "default" && THEMES.some((t) => t.id === state.theme)) {
+    frontmatter.theme = state.theme;
   }
 
   // Tags (only non-empty)

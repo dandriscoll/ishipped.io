@@ -82,6 +82,7 @@ export interface BuilderState {
     alt: string;
     caption: string;
   }>;
+  theme: string;
   body: string;
   repoOwner: string;
   repoName: string;
