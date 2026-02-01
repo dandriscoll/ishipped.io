@@ -169,6 +169,7 @@ export function BuilderPageClient() {
   const [state, dispatch] = useReducer(builderReducer, null, createInitialState);
   const [bodyHtml, setBodyHtml] = useState("");
   const [showMobilePreview, setShowMobilePreview] = useState(false);
+  const [showRawMarkdown, setShowRawMarkdown] = useState(false);
 
   // Validation
   const validationErrors = useMemo(() => validateBuilderState(state), [state]);
@@ -333,20 +334,47 @@ export function BuilderPageClient() {
               !showMobilePreview ? "hidden lg:block" : ""
             }`}
           >
+            {/* Preview toggle */}
+            <div className="flex items-center gap-1 mb-2 bg-gray-200 dark:bg-gray-800 rounded-lg p-0.5 w-fit">
+              <button
+                onClick={() => setShowRawMarkdown(false)}
+                className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                  !showRawMarkdown
+                    ? "bg-white dark:bg-surface-dark font-medium shadow-sm"
+                    : "text-muted dark:text-muted-dark hover:text-gray-700 dark:hover:text-gray-300"
+                }`}
+              >
+                Preview
+              </button>
+              <button
+                onClick={() => setShowRawMarkdown(true)}
+                className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                  showRawMarkdown
+                    ? "bg-white dark:bg-surface-dark font-medium shadow-sm"
+                    : "text-muted dark:text-muted-dark hover:text-gray-700 dark:hover:text-gray-300"
+                }`}
+              >
+                Markdown
+              </button>
+            </div>
             <div
               className="floating-card overflow-hidden"
               style={{ maxHeight: "calc(100vh - 10rem)" }}
             >
               <div className="overflow-auto" style={{ maxHeight: "calc(100vh - 10rem)" }}>
-                <CardRenderer
-                  card={previewCard}
-                  bodyHtml={bodyHtml}
-                  owner={state.repoOwner || "owner"}
-                  repo={state.repoName || "repo"}
-                  ref="main"
-                  metadata={previewMetadata}
-                  theme={state.theme as CardTheme}
-                />
+                {showRawMarkdown ? (
+                  <pre className="p-4 text-sm font-mono whitespace-pre-wrap break-words text-gray-800 dark:text-gray-200">{cardOutput}</pre>
+                ) : (
+                  <CardRenderer
+                    card={previewCard}
+                    bodyHtml={bodyHtml}
+                    owner={state.repoOwner || "owner"}
+                    repo={state.repoName || "repo"}
+                    ref="main"
+                    metadata={previewMetadata}
+                    theme={state.theme as CardTheme}
+                  />
+                )}
               </div>
             </div>
           </div>
