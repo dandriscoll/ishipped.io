@@ -41,7 +41,7 @@ export default function RootLayout({
           <main>
             <RouteHandler>{children}</RouteHandler>
           </main>
-          <footer className="py-4 text-center text-xs text-gray-400 dark:text-gray-600">
+          <footer className="py-4 text-center text-xs text-gray-500 dark:text-gray-400">
             {BUILD_VERSION}
           </footer>
         </ThemeProvider>
