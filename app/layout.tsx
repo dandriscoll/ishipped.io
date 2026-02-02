@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { BUILD_VERSION } from "@/lib/version";
 import { RouteHandler } from "@/components/RouteHandler";
 
 export const metadata: Metadata = {
@@ -40,6 +41,9 @@ export default function RootLayout({
           <main>
             <RouteHandler>{children}</RouteHandler>
           </main>
+          <footer className="py-4 text-center text-xs text-gray-400 dark:text-gray-600">
+            {BUILD_VERSION}
+          </footer>
         </ThemeProvider>
       </body>
     </html>
