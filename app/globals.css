@@ -47,7 +47,7 @@
 }
 
 .card-body pre {
-  @apply bg-gray-100 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto text-sm mb-4;
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg p-4 overflow-x-auto text-sm mb-4;
 }
 
 .card-body code:not(pre code) {
