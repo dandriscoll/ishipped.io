@@ -226,8 +226,9 @@ export function CardPageClient() {
         try {
           const userCards = await fetchUserCards(authorGithub);
           // Count cards excluding the current one
+          const currentCardPath = filePath ? `${owner}/${repo}/${filePath}` : `${owner}/${repo}`;
           const otherCards = userCards.filter(
-            (c) => !(c.owner === owner && c.repo === repo)
+            (c) => c.path !== currentCardPath
           );
           setOtherCardsCount(otherCards.length);
         } catch {
