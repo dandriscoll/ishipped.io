@@ -19,6 +19,18 @@ export interface ParsedUserCard {
   card: ParsedCard;
 }
 
+export interface BrokenCard {
+  owner: string;
+  repo: string;
+  file: string;
+  githubUrl: string;
+}
+
+export interface FetchUserCardsResult {
+  cards: ParsedUserCard[];
+  brokenCards: BrokenCard[];
+}
+
 export type UserApiErrorCode =
   | "INVALID_USERNAME"
   | "USER_NOT_FOUND"
@@ -40,7 +52,7 @@ export function isValidUsername(username: string): boolean {
 
 export async function fetchUserCards(
   username: string
-): Promise<ParsedUserCard[]> {
+): Promise<FetchUserCardsResult> {
   if (!isValidUsername(username)) {
     throw new UserApiError("INVALID_USERNAME");
   }
@@ -67,6 +79,7 @@ export async function fetchUserCards(
 
   // Parse each card content
   const parsedCards: ParsedUserCard[] = [];
+  const brokenCards: BrokenCard[] = [];
 
   for (const card of data.cards) {
     const [owner, repo] = card.path.split("/");
@@ -116,8 +129,15 @@ export async function fetchUserCards(
     } catch {
       // Skip cards that fail to parse
       console.warn(`Failed to parse card for ${card.path}`);
+      const fileName = card.file || "card.md";
+      brokenCards.push({
+        owner,
+        repo,
+        file: fileName,
+        githubUrl: `https://github.com/${card.path}/blob/main/.ishipped/${fileName}`,
+      });
     }
   }
 
-  return parsedCards;
+  return { cards: parsedCards, brokenCards };
 }

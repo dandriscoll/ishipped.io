@@ -6,13 +6,15 @@ import {
   isValidUsername,
   UserApiError,
   type ParsedUserCard,
+  type BrokenCard,
 } from "@/lib/user-api";
 import { Timeline } from "@/components/Timeline";
+import { BrokenCardsIndicator } from "@/components/BrokenCardsIndicator";
 
 type UserState =
   | { status: "loading" }
   | { status: "error"; code: string }
-  | { status: "success"; username: string; cards: ParsedUserCard[] };
+  | { status: "success"; username: string; cards: ParsedUserCard[]; brokenCards: BrokenCard[] };
 
 function LoadingState() {
   return (
@@ -209,12 +211,13 @@ export function UserPageClient() {
       setState({ status: "loading" });
 
       try {
-        const cards = await fetchUserCards(username);
+        const { cards, brokenCards } = await fetchUserCards(username);
 
         setState({
           status: "success",
           username,
           cards,
+          brokenCards,
         });
 
         document.title = `${username}'s Ships - iShipped.io`;
@@ -240,15 +243,23 @@ export function UserPageClient() {
   }
 
   if (state.cards.length === 0) {
-    return <EmptyState username={state.username} />;
+    return (
+      <>
+        <EmptyState username={state.username} />
+        <BrokenCardsIndicator brokenCards={state.brokenCards} />
+      </>
+    );
   }
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] bg-gray-100 dark:bg-bg-dark py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        <UserHeader username={state.username} cardCount={state.cards.length} />
-        <Timeline cards={state.cards} />
+    <>
+      <div className="min-h-[calc(100vh-3.5rem)] bg-gray-100 dark:bg-bg-dark py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <UserHeader username={state.username} cardCount={state.cards.length} />
+          <Timeline cards={state.cards} />
+        </div>
       </div>
-    </div>
+      <BrokenCardsIndicator brokenCards={state.brokenCards} />
+    </>
   );
 }

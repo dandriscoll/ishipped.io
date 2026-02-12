@@ -50,7 +50,7 @@ describe("UserPageClient", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(userApi.isValidUsername).mockReturnValue(true);
-    vi.mocked(userApi.fetchUserCards).mockResolvedValue(mockCards);
+    vi.mocked(userApi.fetchUserCards).mockResolvedValue({ cards: mockCards, brokenCards: [] });
   });
 
   afterEach(() => {
@@ -182,7 +182,7 @@ describe("UserPageClient", () => {
     });
 
     it("renders singular for 1 project", async () => {
-      vi.mocked(userApi.fetchUserCards).mockResolvedValue([mockCards[0]]);
+      vi.mocked(userApi.fetchUserCards).mockResolvedValue({ cards: [mockCards[0]], brokenCards: [] });
 
       render(<UserPageClient />);
 
@@ -254,7 +254,7 @@ describe("UserPageClient", () => {
         value: { pathname: "/u/emptyuser" },
         writable: true,
       });
-      vi.mocked(userApi.fetchUserCards).mockResolvedValue([]);
+      vi.mocked(userApi.fetchUserCards).mockResolvedValue({ cards: [], brokenCards: [] });
     });
 
     it("shows empty state message", async () => {

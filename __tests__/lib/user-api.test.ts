@@ -99,13 +99,14 @@ describe("lib/user-api", () => {
         mockResponse as unknown as Response
       );
 
-      const cards = await fetchUserCards("octocat");
+      const result = await fetchUserCards("octocat");
 
-      expect(cards).toHaveLength(2);
-      expect(cards[0].owner).toBe("octocat");
-      expect(cards[0].repo).toBe("hello-world");
-      expect(cards[0].card.frontmatter.title).toBe("Hello World");
-      expect(cards[1].card.frontmatter.title).toBe("Awesome Project");
+      expect(result.cards).toHaveLength(2);
+      expect(result.brokenCards).toHaveLength(0);
+      expect(result.cards[0].owner).toBe("octocat");
+      expect(result.cards[0].repo).toBe("hello-world");
+      expect(result.cards[0].card.frontmatter.title).toBe("Hello World");
+      expect(result.cards[1].card.frontmatter.title).toBe("Awesome Project");
     });
 
     it("constructs full path for non-card.md files", async () => {
@@ -134,13 +135,13 @@ describe("lib/user-api", () => {
         mockResponse as unknown as Response
       );
 
-      const cards = await fetchUserCards("octocat");
+      const result = await fetchUserCards("octocat");
 
-      expect(cards).toHaveLength(2);
+      expect(result.cards).toHaveLength(2);
       // card.md should use the simple path (owner/repo)
-      expect(cards[0].path).toBe("octocat/hello-world");
+      expect(result.cards[0].path).toBe("octocat/hello-world");
       // non-card.md should include the full file path
-      expect(cards[1].path).toBe("octocat/awesome-project/.ishipped/feature.md");
+      expect(result.cards[1].path).toBe("octocat/awesome-project/.ishipped/feature.md");
     });
 
     it("skips cards that fail to parse", async () => {
@@ -169,10 +170,17 @@ describe("lib/user-api", () => {
         mockResponse as unknown as Response
       );
 
-      const cards = await fetchUserCards("octocat");
+      const result = await fetchUserCards("octocat");
 
-      expect(cards).toHaveLength(1);
-      expect(cards[0].card.frontmatter.title).toBe("Valid");
+      expect(result.cards).toHaveLength(1);
+      expect(result.cards[0].card.frontmatter.title).toBe("Valid");
+      expect(result.brokenCards).toHaveLength(1);
+      expect(result.brokenCards[0]).toEqual({
+        owner: "octocat",
+        repo: "invalid",
+        file: "card.md",
+        githubUrl: "https://github.com/octocat/invalid/blob/main/.ishipped/card.md",
+      });
       expect(consoleSpy).toHaveBeenCalledWith(
         "Failed to parse card for octocat/invalid"
       );
@@ -200,9 +208,9 @@ describe("lib/user-api", () => {
         mockResponse as unknown as Response
       );
 
-      const cards = await fetchUserCards("octocat");
+      const result = await fetchUserCards("octocat");
 
-      expect(cards).toHaveLength(0);
+      expect(result.cards).toHaveLength(0);
     });
 
     it("throws INVALID_USERNAME on 400 response", async () => {
@@ -255,7 +263,7 @@ describe("lib/user-api", () => {
       await expect(fetchUserCards("octocat")).rejects.toThrow("FETCH_FAILED");
     });
 
-    it("returns empty array when no cards exist", async () => {
+    it("returns empty result when no cards exist", async () => {
       const mockResponse = {
         ok: true,
         status: 200,
@@ -270,9 +278,10 @@ describe("lib/user-api", () => {
         mockResponse as unknown as Response
       );
 
-      const cards = await fetchUserCards("octocat");
+      const result = await fetchUserCards("octocat");
 
-      expect(cards).toHaveLength(0);
+      expect(result.cards).toHaveLength(0);
+      expect(result.brokenCards).toHaveLength(0);
     });
 
     it("calls correct API endpoint", async () => {
