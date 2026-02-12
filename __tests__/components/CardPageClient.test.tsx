@@ -64,7 +64,7 @@ This is the body content.`;
     );
 
     // Default: author has no other cards
-    vi.mocked(userApi.fetchUserCards).mockResolvedValue([]);
+    vi.mocked(userApi.fetchUserCards).mockResolvedValue({ cards: [], brokenCards: [] });
   });
 
   afterEach(() => {
@@ -472,7 +472,7 @@ Body`;
         },
       ];
 
-      vi.mocked(userApi.fetchUserCards).mockResolvedValue(otherCards);
+      vi.mocked(userApi.fetchUserCards).mockResolvedValue({ cards: otherCards, brokenCards: [] });
 
       render(<CardPageClient />);
 
@@ -510,7 +510,7 @@ title: Test Project
 Body`;
 
       vi.mocked(github.fetchCardContent).mockResolvedValue(cardWithOwnerAsAuthor);
-      vi.mocked(userApi.fetchUserCards).mockResolvedValue(allCards);
+      vi.mocked(userApi.fetchUserCards).mockResolvedValue({ cards: allCards, brokenCards: [] });
 
       render(<CardPageClient />);
 
@@ -521,7 +521,7 @@ Body`;
     });
 
     it("does not show expand icon when author has no other cards", async () => {
-      vi.mocked(userApi.fetchUserCards).mockResolvedValue([]);
+      vi.mocked(userApi.fetchUserCards).mockResolvedValue({ cards: [], brokenCards: [] });
 
       render(<CardPageClient />);
 

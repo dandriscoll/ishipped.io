@@ -224,7 +224,7 @@ export function CardPageClient() {
         setAuthorUsername(authorGithub);
 
         try {
-          const userCards = await fetchUserCards(authorGithub);
+          const { cards: userCards } = await fetchUserCards(authorGithub);
           // Count cards excluding the current one
           const currentCardPath = filePath ? `${owner}/${repo}/${filePath}` : `${owner}/${repo}`;
           const otherCards = userCards.filter(
