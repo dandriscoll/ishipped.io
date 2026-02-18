@@ -5,12 +5,14 @@ import type { CardAuthor } from "@/lib/card";
 interface AuthorBlockProps {
   author: CardAuthor;
   otherCardsCount?: number;
+  otherCardsLoading?: boolean;
   authorUsername?: string;
 }
 
 export function AuthorBlock({
   author,
   otherCardsCount = 0,
+  otherCardsLoading = false,
   authorUsername,
 }: AuthorBlockProps) {
   const avatarUrl =
@@ -59,8 +61,35 @@ export function AuthorBlock({
         </div>
       </div>
 
-      {/* Expand icon for other cards */}
-      {otherCardsCount > 0 && username && (
+      {/* Loading spinner or expand icon for other cards */}
+      {otherCardsLoading && username ? (
+        <Link
+          href={`/u/${username}/`}
+          className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted dark:text-muted-dark hover:text-accent hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          title={`View all cards by @${username}`}
+        >
+          <svg
+            className="w-4 h-4 animate-spin"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+          <span>Finding more cards</span>
+        </Link>
+      ) : otherCardsCount > 0 && username ? (
         <Link
           href={`/u/${username}/`}
           className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted dark:text-muted-dark hover:text-accent hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
@@ -81,7 +110,7 @@ export function AuthorBlock({
           </svg>
           <span>+{otherCardsCount} more</span>
         </Link>
-      )}
+      ) : null}
     </div>
   );
 }

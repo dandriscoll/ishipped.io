@@ -18,6 +18,7 @@ interface CardRendererProps {
   metadata: RepoMetadata;
   theme?: CardTheme;
   otherCardsCount?: number;
+  otherCardsLoading?: boolean;
   authorUsername?: string | null;
 }
 
@@ -31,6 +32,7 @@ export function CardRenderer({
   metadata,
   theme = "default",
   otherCardsCount = 0,
+  otherCardsLoading = false,
   authorUsername,
 }: CardRendererProps) {
   const { frontmatter } = card;
@@ -144,6 +146,7 @@ export function CardRenderer({
           <AuthorBlock
             author={author}
             otherCardsCount={otherCardsCount}
+            otherCardsLoading={otherCardsLoading}
             authorUsername={authorUsername || author.github}
           />
           {frontmatter.shipped && (

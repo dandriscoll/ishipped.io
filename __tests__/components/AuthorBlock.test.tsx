@@ -154,6 +154,47 @@ describe("AuthorBlock", () => {
       expect(expandLink).toHaveAttribute("title", "View all cards by @testauthor");
     });
 
+    it("shows loading spinner when otherCardsLoading is true", () => {
+      render(
+        <AuthorBlock
+          author={basicAuthor}
+          otherCardsLoading={true}
+          authorUsername="testauthor"
+        />
+      );
+
+      expect(screen.getByText("Finding more cards")).toBeInTheDocument();
+      const spinnerLink = screen.getByRole("link", { name: /Finding more cards/ });
+      expect(spinnerLink).toHaveAttribute("href", "/u/testauthor");
+    });
+
+    it("does not show loading spinner when otherCardsLoading is false", () => {
+      render(
+        <AuthorBlock
+          author={basicAuthor}
+          otherCardsLoading={false}
+          otherCardsCount={0}
+          authorUsername="testauthor"
+        />
+      );
+
+      expect(screen.queryByText("Finding more cards")).not.toBeInTheDocument();
+    });
+
+    it("shows count instead of spinner when loading completes with results", () => {
+      render(
+        <AuthorBlock
+          author={basicAuthor}
+          otherCardsLoading={false}
+          otherCardsCount={5}
+          authorUsername="testauthor"
+        />
+      );
+
+      expect(screen.queryByText("Finding more cards")).not.toBeInTheDocument();
+      expect(screen.getByText("+5 more")).toBeInTheDocument();
+    });
+
     it("does not show expand icon when username is missing", () => {
       const authorWithoutGithub: CardAuthor = {
         name: "No GitHub",

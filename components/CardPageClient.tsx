@@ -116,6 +116,7 @@ export function CardPageClient() {
   const [state, setState] = useState<CardState>({ status: "loading" });
   const [theme, setTheme] = useState<CardTheme>("default");
   const [otherCardsCount, setOtherCardsCount] = useState<number>(0);
+  const [otherCardsLoading, setOtherCardsLoading] = useState<boolean>(true);
   const [authorUsername, setAuthorUsername] = useState<string | null>(null);
 
   const handleThemeChange = useCallback((newTheme: CardTheme) => {
@@ -234,6 +235,8 @@ export function CardPageClient() {
         } catch {
           // Silently fail - the expand icon just won't show
           setOtherCardsCount(0);
+        } finally {
+          setOtherCardsLoading(false);
         }
       } catch (error) {
         if (error instanceof GitHubURLError) {
@@ -275,6 +278,7 @@ export function CardPageClient() {
         metadata={state.metadata}
         theme={theme}
         otherCardsCount={otherCardsCount}
+        otherCardsLoading={otherCardsLoading}
         authorUsername={authorUsername}
       />
     </div>
