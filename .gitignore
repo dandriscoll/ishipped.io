@@ -40,3 +40,6 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+# Local agent/tooling state — never commit
+.devbox/
+.claude/
