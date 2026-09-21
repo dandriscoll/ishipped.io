@@ -8,7 +8,7 @@ import type { Options as SanitizeOptions } from "rehype-sanitize";
 import type { Root, Element, ElementContent } from "hast";
 
 // Strict sanitization schema
-const sanitizeSchema: SanitizeOptions = {
+export const sanitizeSchema: SanitizeOptions = {
   ...defaultSchema,
   tagNames: [
     "h2",
@@ -36,15 +36,14 @@ const sanitizeSchema: SanitizeOptions = {
     "tr",
     "th",
     "td",
-    "span",
   ],
   attributes: {
     ...defaultSchema.attributes,
     a: ["href", "title"],
     img: ["src", "alt", "title", "loading"],
-    code: ["className"],
-    span: ["className"],
-    pre: ["className"],
+    // Fenced code blocks carry their language as `language-*`; no other
+    // classes are needed.
+    code: [["className", /^language-./]],
     "*": [],
   },
   protocols: {

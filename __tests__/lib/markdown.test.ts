@@ -1,5 +1,23 @@
 import { describe, it, expect } from "vitest";
-import { renderMarkdown } from "@/lib/markdown";
+import { unified } from "unified";
+import rehypeSanitize from "rehype-sanitize";
+import type { Root, Element } from "hast";
+import { renderMarkdown, sanitizeSchema } from "@/lib/markdown";
+
+function sanitizeTree(tree: Root): Root {
+  return unified().use(rehypeSanitize, sanitizeSchema).runSync(tree) as Root;
+}
+
+function findElements(node: Root | Element, tagName: string): Element[] {
+  const found: Element[] = [];
+  for (const child of node.children) {
+    if (child.type === "element") {
+      if (child.tagName === tagName) found.push(child);
+      found.push(...findElements(child, tagName));
+    }
+  }
+  return found;
+}
 
 describe("lib/markdown", () => {
   describe("renderMarkdown", () => {
@@ -259,6 +277,68 @@ describe("lib/markdown", () => {
         const html = await renderMarkdown(md);
 
         expect(html).not.toContain("<button>");
+      });
+    });
+
+    describe("class attributes", () => {
+      it("keeps the language class on fenced code", async () => {
+        const html = await renderMarkdown("```js\nconst a = 1;\n```");
+
+        expect(html).toContain('<code class="language-js">');
+      });
+
+      it("drops span elements but keeps their text", () => {
+        const tree: Root = {
+          type: "root",
+          children: [
+            {
+              type: "element",
+              tagName: "p",
+              properties: {},
+              children: [
+                {
+                  type: "element",
+                  tagName: "span",
+                  properties: { className: ["hidden", "absolute", "z-50"] },
+                  children: [{ type: "text", value: "inner" }],
+                },
+              ],
+            },
+          ],
+        };
+
+        const out = sanitizeTree(tree);
+
+        expect(findElements(out, "span")).toHaveLength(0);
+        expect(JSON.stringify(out)).toContain("inner");
+      });
+
+      it("drops classes on pre and keeps only language classes on code", () => {
+        const tree: Root = {
+          type: "root",
+          children: [
+            {
+              type: "element",
+              tagName: "pre",
+              properties: { className: ["fixed", "inset-0"] },
+              children: [
+                {
+                  type: "element",
+                  tagName: "code",
+                  properties: { className: ["language-ts", "hidden"] },
+                  children: [{ type: "text", value: "x" }],
+                },
+              ],
+            },
+          ],
+        };
+
+        const out = sanitizeTree(tree);
+        const [pre] = findElements(out, "pre");
+        const [code] = findElements(out, "code");
+
+        expect(pre.properties?.className).toBeUndefined();
+        expect(code.properties?.className).toEqual(["language-ts"]);
       });
     });
 
